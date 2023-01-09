@@ -1,25 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import { Loader } from "./components/Loader/Loader"
+import AuthRoutes from "./pages/AuthRoutes"
+import LayoutRoutes from "./pages/LayoutRoutes"
+import { useAuth } from "./provider/useAuth"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+
+export const App = () => {
+
+  const { admin, isLoading } = useAuth()
+
+  if (isLoading) return <Loader height={'80vh'} />
+
+
+  return !admin ? <AuthRoutes /> : <LayoutRoutes />
 }
-
-export default App;

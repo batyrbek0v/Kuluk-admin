@@ -1,0 +1,39 @@
+.auth-container {
+  width: 100%;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-container .auth-card {
+  width: 400px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+.auth-container .auth-card .succes {
+  color: lightgreen;
+}
+
+.auth-container .auth-card .form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 12px;
+}
+
+.auth-container .auth-card .form button {
+  height: 40px;
+}
+
+.auth-container .auth-card .form p {
+  color: red;
+}
