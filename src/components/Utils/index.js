@@ -6,14 +6,15 @@ import { BiMessageSquareDetail, BiEdit } from 'react-icons/bi'
 import { GoSignOut } from 'react-icons/go'
 import { MdDeliveryDining } from 'react-icons/md'
 import { TbTruckDelivery } from 'react-icons/tb'
+import { BsPeopleFill } from 'react-icons/bs'
 import { handleSignOut } from '../../configs'
-
+import deliveryMan from '../../assets/icons/delivery-man.png'
 
 
 export const sideList = [
   { id: 1, icon: <AiFillHome />, title: 'Статистика', path: '/' },
   { id: 2, icon: <FaUserPlus />, title: 'Добавить курьера', path: '/addcourier' },
-  { id: 3, icon: <BiMessageSquareDetail />, title: 'Сообщения', path: '/messages' },
+  { id: 3, icon: <BsPeopleFill />, title: 'Курьеры', path: '/couriers' },
   { id: 4, icon: <BiEdit />, title: 'Изменение', path: '/edit' },
   { id: 5, icon: <GoSignOut />, title: 'Выйти', event: handleSignOut },
   // { id: 6, icon: <AiOutlineClose />, title: 'Отмененные заказы', path: '/cancelledOrders' },

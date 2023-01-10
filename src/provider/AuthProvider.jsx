@@ -3,21 +3,6 @@ import { onAuthStateChanged } from 'firebase/auth'
 import React from 'react'
 import { auth } from '../configs'
 
-// const useLogin = () => {
-
-//   const [admin, setAdmin] = React.useState(null)
-
-
-
-//   return {
-//     admin,
-//     isLoading,
-//   }
-// }
-
-// export default useLogin
-
-
 export const AuthContext = React.createContext({})
 
 export const AuthProvider = ({ children }) => {

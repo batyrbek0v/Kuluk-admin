@@ -24,6 +24,7 @@ const LayoutRoutes = () => {
         <Routes>
           <Route path='/' element={<LayoutPages.Main />} />
           <Route path='/addcourier' element={<LayoutPages.AddCourier />} />
+          <Route path='/couriers' element={<LayoutPages.Couriers />} />
         </Routes>
       </div>
     </>
