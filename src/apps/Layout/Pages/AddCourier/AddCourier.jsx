@@ -7,6 +7,8 @@ import { useForm } from 'react-hook-form';
 import { FaUserPlus } from 'react-icons/fa'
 import { POST } from '../../../../api/api';
 import { FormValidation } from '../../../../components/Form/FormValidation/exports';
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from '../../../../configs';
 
 const AddCourier = () => {
 
@@ -20,9 +22,18 @@ const AddCourier = () => {
     formState: { errors }
   } = useForm()
 
-  const handleAddCourirer = (data) => {
-    POST.postCourier({ ...data, active, online })
-    reset()
+  const handleAddCourirer = async (data) => {
+    try {
+      const docRef = await setDoc(doc(db, "couriers", `${data.number}`), {
+        ...data,
+        active,
+        online
+      })
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    } finally {
+      reset()
+    }
   }
 
   return (
@@ -30,7 +41,7 @@ const AddCourier = () => {
       <div className='addCourier-container'>
         <Title title={'Добавление курьера'} />
         <div className='addCourier-inner'>
-          <form onSubmit={data => handleSubmit(console.log(data))}>
+          <form>
             <TextField
               id="filled-textarea"
               label="Имя"
@@ -60,10 +71,27 @@ const AddCourier = () => {
 
               {...register('surName',
                 {
-                  required: FormValidation.RequiredInput.required
+                  required: FormValidation.RequiredInput.required,
+
                 })
               }
-
+            />
+            <TextField
+              id="filled-textarea"
+              label="ПИН"
+              placeholder="0101"
+              variant="filled"
+              size="small"
+              name='PIN'
+              helperText={errors?.PIN?.message}
+              error={errors?.PIN && true}
+              multiline
+              {...register('PIN',
+                {
+                  required: FormValidation.RequiredInput.required,
+                  maxLength: FormValidation.maxLengthValidation
+                })
+              }
             />
             <TextField
               id="filled-textarea"
@@ -73,8 +101,8 @@ const AddCourier = () => {
               variant="filled"
               size="small"
               name='LastName'
-              helperText={errors?.number?.message}
-              error={errors?.number && true}
+              helperText={errors?.phone?.message}
+              error={errors?.phone && true}
               {...register('number',
                 {
                   required: FormValidation.RequiredInput.required
@@ -90,8 +118,8 @@ const AddCourier = () => {
               variant="filled"
               size="small"
               name='raiting'
-              helperText={errors?.raiting?.message}
-              error={errors?.raiting && true}
+              helperText={errors?.rating?.message}
+              error={errors?.rating && true}
               {...register('raiting',
                 {
                   required: FormValidation.RequiredInput.required

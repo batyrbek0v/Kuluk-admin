@@ -33,7 +33,6 @@ function createData(name, calories, fat, carbs, protein) {
     protein,
   };
 }
-
 const rows = [
   createData('Имя', 305, 3.7, 67, 4.3),
   createData('Фамилия', 452, 25.0, 51, 4.9),
@@ -84,7 +83,7 @@ const headCells = [
     id: 'name',
     numeric: false,
     disablePadding: true,
-    label: 'Dessert (100g serving)',
+    label: '#ID',
   },
   {
     id: 'Имя',
@@ -96,19 +95,19 @@ const headCells = [
     id: 'fat',
     numeric: true,
     disablePadding: false,
-    label: 'Fat (g)',
+    label: 'Фамилия',
   },
   {
     id: 'carbs',
     numeric: true,
     disablePadding: false,
-    label: 'Carbs (g)',
+    label: 'Город',
   },
   {
     id: 'protein',
-    numeric: true,
+    numeric: false,
     disablePadding: false,
-    label: 'Protein (g)',
+    label: 'Тип транспорта',
   },
 ];
 
@@ -289,26 +288,27 @@ export default function CourierTable() {
 
   const getBase = React.useCallback(() => {
     GET.getCourier()
-      .then(res => {
-        if (res?.data) {
-          const newBase = Object.entries(res?.data)
-            .map(([id, item], index) => {
-              return {
-                id,
-                index,
-                ...item
-              }
-            })
-          setBase(newBase)
-        }
-      })
+      .then(res => setBase(res.json()))
+    // .then(res => {
+    //   if (res?.data) {
+    //     const newBase = Object.entries(res?.data)
+    //       .map(([id, item], index) => {
+    //         return {
+    //           id,
+    //           index,
+    //           ...item
+    //         }
+    //       })
+    //     setBase(newBase)
+    //   }
+    // })
   }, [])
 
   React.useEffect(() => {
     getBase()
   }, [getBase])
-  console.log(base)
 
+  console.log(base)
 
   return (
     <Box sx={{ width: '100%' }}>

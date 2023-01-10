@@ -8,7 +8,6 @@ import { MdDeliveryDining } from 'react-icons/md'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { BsPeopleFill } from 'react-icons/bs'
 import { handleSignOut } from '../../configs'
-import deliveryMan from '../../assets/icons/delivery-man.png'
 
 
 export const sideList = [
@@ -20,12 +19,14 @@ export const sideList = [
   // { id: 6, icon: <AiOutlineClose />, title: 'Отмененные заказы', path: '/cancelledOrders' },
   // { id: 7, icon: <AiOutlineUserAdd />, title: 'Добавить курьера', path: '/addcourier' },
 ]
+
 export const courierType = [
   { id: 1, icon: <FaWalking />, title: 'Пеший', },
   { id: 2, icon: <GrBike />, title: 'На велике', },
   { id: 3, icon: <MdDeliveryDining />, title: 'На мопеде', },
   { id: 4, icon: <TbTruckDelivery />, title: 'На машине', },
 ]
+
 export const cities = [
   { id: 1, title: 'Бишкек', },
   { id: 2, title: 'Ош', },
@@ -34,4 +35,12 @@ export const cities = [
   { id: 5, title: 'Чуй', },
   { id: 6, title: 'Баткен', },
   { id: 7, title: 'Исык-Куль', },
+]
+
+export const courierTableList = [
+  { id: 1, title: '#ID', },
+  { id: 2, title: 'Имя', },
+  { id: 3, title: 'Фамилия', },
+  { id: 4, title: 'Номер', },
+  { id: 5, title: 'Статус', },
 ]
