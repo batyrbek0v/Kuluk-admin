@@ -15,8 +15,6 @@ const LayoutRoutes = () => {
     admin ? navigate('/') : navigate('/auth/login')
   }, [admin])
 
-  console.log(admin);
-
   return (
     <>
       <div className='general-container'>
@@ -25,6 +23,8 @@ const LayoutRoutes = () => {
           <Route path='/' element={<LayoutPages.Main />} />
           <Route path='/addcourier' element={<LayoutPages.AddCourier />} />
           <Route path='/couriers' element={<LayoutPages.Couriers />} />
+          <Route path='/admin' element={<LayoutPages.Admin />} />
+          <Route path='/addorder' element={<LayoutPages.AddOrder />} />
         </Routes>
       </div>
     </>

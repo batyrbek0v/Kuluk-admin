@@ -1,7 +1,8 @@
 import React from 'react'
-import Card from '../../../../components/Card/Card';
+import TTable from '../../../../components/Table/TTable';
 import { Title } from './../../../../components/Title/Title';
 import './Couriers.css'
+import { BsTable } from 'react-icons/bs';
 
 
 const Couriers = () => {
@@ -12,11 +13,9 @@ const Couriers = () => {
   return (
     <>
       <div className='courier-container'>
-        <Title title={'Курьеры'} />
+        <Title title={'Таблица курьеров'} icon={<BsTable />} />
         <div className='courier-inner'>
-          <div className='courier-card-wrapper'>
-            <Card />
-          </div>
+          <TTable />
         </div>
       </div>
     </>
