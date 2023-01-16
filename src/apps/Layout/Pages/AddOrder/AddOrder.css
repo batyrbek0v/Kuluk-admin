@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 1000px;
   background-color: white;
   border-radius: 12px;
   padding: 2rem 1.5rem;
@@ -19,22 +18,25 @@
 
 .container .order-form .order-form-flex {
   width: 100%;
-  height: 400px;
   display: flex;
   gap: 20px;
 }
 
 .container .order-form .order-form-flex .order-block {
   width: 100%;
-  height: 100%;
+  min-height: 480px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   border-radius: 12px;
-  /* padding: 1rem; */
 }
+
+.container .order-form .order-form-flex .order-block:last-child {
+  width: 200px;
+}
+
 
 .container .order-form .order-form-flex .order-block .order-block-head {
   text-transform: uppercase;
@@ -49,4 +51,5 @@
   display: flex;
   flex-direction: column;
   padding: 0 1rem;
+  gap: 20px;
 }

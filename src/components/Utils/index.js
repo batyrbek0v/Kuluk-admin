@@ -17,13 +17,11 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export const sideList = [
   { id: 1, icon: <AssessmentIcon />, title: 'Статистика', path: '/' },
-  { id: 2, icon: <PersonAddAlt1Icon />, title: 'Добавить курьера', path: '/addcourier' },
-  { id: 3, icon: <LibraryAddIcon fontSize="small" />, title: 'Добавить заказ', path: '/addorder' },
+  { id: 2, icon: <LibraryAddIcon fontSize="small" />, title: 'Добавить заказ', path: '/addorder' },
+  { id: 3, icon: <PersonAddAlt1Icon />, title: 'Добавить курьера', path: '/addcourier' },
   { id: 4, icon: <BsTable />, title: 'Таблица курьеров', path: '/couriers' },
   { id: 5, icon: <AdminPanelSettingsIcon />, title: 'Админ панель', path: '/admin' },
   { id: 6, icon: <ExitToAppIcon />, title: 'Выйти', event: handleSignOut },
-  // { id: 6, icon: <AiOutlineClose />, title: 'Отмененные заказы', path: '/cancelledOrders' },
-  // { id: 7, icon: <AiOutlineUserAdd />, title: 'Добавить курьера', path: '/addcourier' },
 ]
 
 export const courierType = [
@@ -43,6 +41,46 @@ export const cities = [
   { id: 7, title: 'Исык-Куль', },
 ]
 
+// ---------------------------------------------------------------
+
+// ORDER-UNPUT==================================
+export const typeOfOrder = [
+  { id: 1, value: 'document', name: 'Документ', },
+  { id: 2, value: 'medicine', name: 'Лекарство', },
+  { id: 3, value: 'food', name: 'Еда', },
+  { id: 4, value: 'small_box', name: 'Маленькая коробка', },
+  { id: 5, value: 'box', name: 'Коробка', },
+  { id: 6, value: 'large_box', name: 'Большая коробка', },
+  { id: 7, value: 'other', name: 'Другое', },
+]
+export const orderTariff = [
+  { id: 1, value: '', title: 'По городу (150⃀)', },
+  { id: 2, value: '', title: 'Жилмассив (220⃀)', },
+  { id: 3, value: '', title: 'От двери до двери (180⃀)', },
+  { id: 4, value: '', title: 'Регионы (300⃀)', },
+]
+export const payment = [
+  { id: 1, value: "cash", title: 'Наличными', },
+  { id: 2, value: "mbank", title: 'МБАНК', },
+  { id: 3, value: "optima", title: 'Оптима', },
+  { id: 5, value: "elsom", title: 'Элсом', },
+  { id: 4, value: "odengi", title: 'О!-деньги', },
+  { id: 6, value: "other", title: 'Другое', },
+]
+
+export const paymentStatus = [
+  { id: 1, value: false, title: 'Не оплачен', },
+  { id: 2, value: true, title: 'Оплачен', },
+]
+export const paymentPerson = [
+  { id: 1, value: '1', title: 'Отправитель', },
+  { id: 2, value: '2', title: 'Получатель', },
+]
+// ORDER-UNPUT==================================
+
+// ---------------------------------------------------------------
+
+// COURIERS-AND-ORDER-TABLE=====================
 export const courierTableList = [
   { field: 'id', headerName: '#ID', width: 70 },
   { field: 'name', headerName: 'Имя', width: 130 },
@@ -58,3 +96,6 @@ export const courierTableList = [
     field: 'number', headerName: 'Номер телефона', sortable: false, width: 160,
   },
 ];
+// COURIERS-AND-ORDER-TABLE=====================
+
+
