@@ -30,22 +30,18 @@ const TTable = () => {
     getBase()
   }, [])
 
+  console.log(base)
   return (
     <>
       <div style={{ width: '100%' }} className='table-container'>
-        <div className='table-refresh-icon'>
-          <FiRefreshCcw title='Обновить таблицу' onClick={handleRefreshData} />
-        </div>
         {
           !base
             ? <Loader height={'100%'} />
             : <DataGrid
-              rows={base}
+              rows={base && base}
               columns={courierTableList}
               pageSize={6}
               rowsPerPageOptions={[6]}
-              components={{
-              }}
             />
 
         }

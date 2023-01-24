@@ -166,7 +166,8 @@ const AddCourier = () => {
                     id="filled-select-currency"
                     select
                     label="Город/район"
-                    defaultValue={city[0].name}
+                    // defaultValue={city[0].name}
+                    defaultValue={''}
                     helperText="Выберите город курьера"
                     variant="filled"
                     size="small"
@@ -179,22 +180,6 @@ const AddCourier = () => {
                       </MenuItem>
                     ))}
                   </TextField>
-                  {/* <TextField
-                sx={{ width: '200px' }}
-                id="filled-select-currency"
-                select
-                label="Село/Микрорайон"
-                helperText="Село/микрорайон"
-                variant="filled"
-                size="small"
-                {...register('district')}
-              >
-                {cities.map((type) => (
-                  <MenuItem key={type.title} value={type.title}>
-                    {type.title}
-                  </MenuItem>
-                ))}
-              </TextField> */}
                 </form>
                 <Button
                   variant="contained"

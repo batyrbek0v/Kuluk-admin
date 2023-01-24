@@ -7,9 +7,6 @@ import { BsTable } from 'react-icons/bs';
 
 const Couriers = () => {
 
-
-
-
   return (
     <>
       <div className='courier-container'>

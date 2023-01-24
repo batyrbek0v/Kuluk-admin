@@ -23,15 +23,19 @@ const AddOrder = () => {
   const date = new Date()
   const [city, setCity] = React.useState(null)
   const [cityId, setCityId] = React.useState('')
+  const [cityId2, setCityId2] = React.useState('')
   const [district, setDistrict] = React.useState(null)
+  const [district2, setDistrict2] = React.useState(null)
 
   const citiesRef = collection(db, "city")
 
   const villageRef = collection(db, "village")
 
   const handleChange = (e) => {
-    // console.log(event.target)
     setCityId(e.target.value)
+  }
+  const handleChange2 = (e) => {
+    setCityId2(e.target.value)
   }
 
 
@@ -41,34 +45,50 @@ const AddOrder = () => {
     try {
       const docRef = await addDoc(collection(db, 'orders'),
         {
-          adressFrom: {
-            adress: order.fromAdress,
+          addressFrom: {
+            address: order.fromAdress,
             city: cityId[0],
             cityName: cityId[1],
-            districtName: order.fromDistrict[0],
             district: order.fromDistrict[1],
+            districtName: order.fromDistrict[0],
+            lat: 42.876254,
+            lon: 74.604228
           },
-          adressTo: {
-            adress: order.toAdress,
-            city: order.toCity,
-            district: order.toDistrict,
+          addressTo: {
+            address: order.toAdress,
+            city: cityId2[0],
+            cityName: cityId2[1],
+            district: order.toDistrict[0],
+            districtName: order.toDistrict[1],
+            lat: 42.876254,
+            lon: 74.604228
           },
           tariff: {
             cost: order.cost,
             name: order.orderTariff,
             cost: order.cost,
           },
+          cancellationReason: "",
           comments: order.commits,
           cost: order.cost,
-          courierOne: order.fromPhone,
-          courierTwo: order.toPhone,
-          paymentMethod: order.payment,
-          whoPays: order.paymentPerson,
-          paymentStatus: order.paymentStatus == 'Оплачено' ? true : false,
+          cityFrom: cityId[0],
+          cityTo: cityId2[0],
+          cityFilter: cityId[0],
+          courierOne: "",
+          courierTwo: "",
+          dateCreated: date,
           packageType: order.orderType,
-          dataCreated: date,
-          sandlerName: order.fromName,
-          recieverName: order.toName
+          paymentMethod: order.payment,
+          paymentStatus: order.paymentStatus,
+          receiver: order.toPhone,
+          receiverName: order.toName,
+          receiverPhone: order.toPhone,
+          redemption: order.redemption,
+          sender: order.fromPhone,
+          senderName: order.fromName,
+          senderPhone: order.fromPhone,
+          status: "status_new",
+          whoPays: order.paymentPerson,
         }
       )
     } catch (e) {
@@ -86,31 +106,26 @@ const AddOrder = () => {
     }
 
     const getDist = async () => {
-
-      const q = query(villageRef, where("district", "==", cityId[0]));
-
-
+      const q = query(villageRef, where("district", "==", cityId[0] && cityId[0]));
       const base = await getDocs(q)
-      // console.log(base)
-      // const newBase = base.forEach(doc => {
-      //   console.log(doc.data())
-      // });
-
-      // setDistrict(base && base?.map((doc) => ({ ...doc?.data() })))
-
       setDistrict(base?.docs?.map((doc) => ({ ...doc?.data() })))
-
+    }
+    const getDist2 = async () => {
+      const q = query(villageRef, where("district", "==", cityId2[0] && cityId2[0]));
+      const base = await getDocs(q)
+      setDistrict2(base?.docs?.map((doc) => ({ ...doc?.data() })))
     }
     getCity()
     getDist(cityId)
-  }, [cityId])
+    getDist2(cityId2)
+
+  }, [cityId, cityId2])
 
 
   const sortCity = city?.sort((a, b) => {
     if (a['id'] < b['id']) return -1
   })
 
-  // console.log(district)
 
   return (
     <>
@@ -160,13 +175,8 @@ const AddOrder = () => {
                       helperText="Выберите город"
                       variant="outlined"
                       size="small"
-                      defaultValue={city[0].id}
+                      defaultValue={'1,г. Бишкек'}
                       onChange={handleChange}
-                    // {...register('fromCity',
-                    //   {
-                    //     required: FormValidation.RequiredInput.required,
-                    //   })
-                    // }
                     >
                       {
                         city?.map((city) => (
@@ -181,14 +191,13 @@ const AddOrder = () => {
                         ))
                       }
                     </TextField>
-
                     <TextField
                       id="outlined-basic"
                       select
                       label="Село/микрорайон"
                       variant="outlined"
                       placeholder='Введите село/микрорайон'
-                      defaultValue={district && district[0]?.name}
+                      defaultValue={''}
                       disabled={!cityId ? true : false}
                       {...register('fromDistrict', {
                         required: FormValidation.RequiredInput.required
@@ -251,22 +260,19 @@ const AddOrder = () => {
                       }
                     />
                     <TextField
-                      id="filled-select-currency"
+                      id="filled-select-currency2"
                       select
                       label="Город/район"
-                      defaultValue={city[1].name}
+                      defaultValue={''}
                       helperText="Выберите тип курьера"
                       variant="outlined"
                       size="small"
                       error={errors?.toCity && true}
-                      {...register('toCity', {
-                        required: FormValidation.RequiredInput.required,
-                      })
-                      }
+                      onChange={handleChange2}
                     >
                       {
                         city?.map((city) => (
-                          <MenuItem key={city.id} value={city.name}>
+                          <MenuItem key={city.id} value={[city.id, city.name]}>
                             {city.name}
                           </MenuItem>
                         ))
@@ -274,16 +280,26 @@ const AddOrder = () => {
                     </TextField>
                     <TextField
                       id="outlined-basic"
+                      select
                       label="Село/микрорайон"
                       variant="outlined"
                       placeholder='Введите село/микрорайон'
-                      // error={errors?.fromAdress ? true : false}
-                      // helperText={errors ? errors?.fromAdress?.message : ''}
+                      // defaultValue={district2 && district2[0]?.name}
+                      defaultValue={''}
+                      disabled={!cityId2 ? true : false}
                       {...register('toDistrict', {
                         required: FormValidation.RequiredInput.required
                       })
                       }
-                    />
+                    >
+                      {
+                        district2?.map((city) => (
+                          <MenuItem key={city.id} value={[city.id, city.name]}>
+                            {city.name}
+                          </MenuItem>
+                        ))
+                      }
+                    </TextField>
                     <TextField
                       id="outlined-basic"
                       label="Введите адрес доставки"
@@ -332,7 +348,7 @@ const AddOrder = () => {
                         id="filled-select-currency"
                         select
                         label="Выберите тариф"
-                        defaultValue="По городу (150⃀)"
+                        defaultValue={orderTariff[0].value}
                         variant="outlined"
                         size="small"
                         {...register('orderTariff', {
@@ -341,7 +357,7 @@ const AddOrder = () => {
                         }
                       >
                         {orderTariff.map((type) => (
-                          <MenuItem key={type.id} value={type.title}>
+                          <MenuItem key={type.id} value={type.value}>
                             {type.title}
                           </MenuItem>
                         ))}
@@ -354,7 +370,7 @@ const AddOrder = () => {
                       defaultValue={0}
                       placeholder='0'
                       type="number"
-                      {...register('buyOut', {
+                      {...register('redemption', {
                         required: FormValidation.RequiredInput.required,
                       })
                       }

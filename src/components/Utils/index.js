@@ -1,10 +1,7 @@
 import React from 'react'
 import { GrBike } from 'react-icons/gr'
-import { AiFillHome, AiOutlineClose, AiOutlineUserAdd } from 'react-icons/ai'
-import { FaUserPlus, FaWalking, FaUserEdit } from 'react-icons/fa'
-import { BiMessageSquareDetail, BiEdit } from 'react-icons/bi'
-import { GoSignOut } from 'react-icons/go'
-import { FcAssistant } from 'react-icons/fc'
+import { FaWalking } from 'react-icons/fa'
+import { FaClipboardList } from 'react-icons/fa'
 import { MdDeliveryDining } from 'react-icons/md'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { BsTable } from 'react-icons/bs'
@@ -18,10 +15,11 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 export const sideList = [
   { id: 1, icon: <AssessmentIcon />, title: 'Статистика', path: '/' },
   { id: 2, icon: <LibraryAddIcon fontSize="small" />, title: 'Добавить заказ', path: '/addorder' },
-  { id: 3, icon: <PersonAddAlt1Icon />, title: 'Добавить курьера', path: '/addcourier' },
-  { id: 4, icon: <BsTable />, title: 'Таблица курьеров', path: '/couriers' },
-  { id: 5, icon: <AdminPanelSettingsIcon />, title: 'Админ панель', path: '/admin' },
-  { id: 6, icon: <ExitToAppIcon />, title: 'Выйти', event: handleSignOut },
+  { id: 3, icon: <FaClipboardList size={"18px"} />, title: 'Список заказов', path: '/orders' },
+  { id: 4, icon: <PersonAddAlt1Icon />, title: 'Добавить курьера', path: '/addcourier' },
+  { id: 5, icon: <BsTable />, title: 'Таблица курьеров', path: '/couriers' },
+  { id: 6, icon: <AdminPanelSettingsIcon />, title: 'Админ панель', path: '/admin' },
+  { id: 7, icon: <ExitToAppIcon />, title: 'Выйти', event: handleSignOut },
 ]
 
 export const courierType = [
@@ -31,15 +29,6 @@ export const courierType = [
   { id: 4, icon: <TbTruckDelivery />, title: 'На машине', },
 ]
 
-export const cities = [
-  { id: 1, title: 'Бишкек', },
-  { id: 2, title: 'Ош', },
-  { id: 3, title: 'Джалал-Абад', },
-  { id: 4, title: 'Нарын', },
-  { id: 5, title: 'Чуй', },
-  { id: 6, title: 'Баткен', },
-  { id: 7, title: 'Исык-Куль', },
-]
 
 // ---------------------------------------------------------------
 
@@ -54,10 +43,10 @@ export const typeOfOrder = [
   { id: 7, value: 'other', name: 'Другое', },
 ]
 export const orderTariff = [
-  { id: 1, value: '', title: 'По городу (150⃀)', },
-  { id: 2, value: '', title: 'Жилмассив (220⃀)', },
-  { id: 3, value: '', title: 'От двери до двери (180⃀)', },
-  { id: 4, value: '', title: 'Регионы (300⃀)', },
+  { id: 1, value: 'По городу', title: 'По городу (150⃀)', },
+  { id: 2, value: 'Жилмассив', title: 'Жилмассив (220⃀)', },
+  { id: 3, value: 'От двери до двери', title: 'От двери до двери (180⃀)', },
+  { id: 4, value: 'Регионы', title: 'Регионы (300⃀)', },
 ]
 export const payment = [
   { id: 1, value: "cash", title: 'Наличными', },
@@ -98,4 +87,19 @@ export const courierTableList = [
 ];
 // COURIERS-AND-ORDER-TABLE=====================
 
+// ---------------------------------------------------------------
 
+// SORTING-ORDER-LIST
+
+// SORT-BY-COST
+
+export const sortByCostList = [
+  // { id: 1, name: 'Все', title: 'Отправитель', },
+  // { id: 2, name: 'По убыванию', title: 'Отправитель', },
+  // { id: 3, name: 'По возростанию', title: 'Получатель', },
+  // { id: 2, name: 'Все', title: 'Получатель', },
+  { id: 1, name: 150, title: 'Получатель', },
+  { id: 2, name: 180, title: 'Получатель', },
+  { id: 3, name: 220, title: 'Получатель', },
+  { id: 4, name: 300, title: 'Получатель', },
+]

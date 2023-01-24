@@ -1,0 +1,33 @@
+.container .container-inner {
+  width: 1150px;
+  /* height: 632px; */
+  display: flex;
+  flex-direction: column;
+}
+
+.container .container-inner .orders-sorting-header {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  /* background-color: #f0f0f7; */
+  border-radius: 12px;
+  gap: 20px;
+}
+
+.container .container-inner .orders-sorting-header .order-search-block {
+  width: 370px;
+}
+.container .container-inner .orders-sorting-header .order-cost-sort{
+  width: 200px;
+}
+
+.container .container-inner .orders-card-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 40px;
+
+}
