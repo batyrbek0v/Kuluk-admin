@@ -112,3 +112,7 @@
   flex-grow: 1;
   border-bottom: 1px dashed #171717;
 }
+.orders-more-block .order-more-btns{
+  width: 100%;
+  display: flex;
+}

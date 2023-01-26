@@ -104,7 +104,7 @@ const AddCourier = () => {
                     helperText={errors?.PIN?.message}
                     error={errors?.PIN && true}
                     multiline
-                    {...register('PIN',
+                    {...register('pin',
                       {
                         required: FormValidation.RequiredInput.required,
                         maxLength: FormValidation.maxLengthValidation
@@ -121,7 +121,7 @@ const AddCourier = () => {
                     name='LastName'
                     helperText={errors?.phone?.message}
                     error={errors?.phone && true}
-                    {...register('number',
+                    {...register('phone',
                       {
                         required: FormValidation.RequiredInput.required
                       })

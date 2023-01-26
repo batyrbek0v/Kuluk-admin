@@ -6,6 +6,7 @@ import Admin from './Admin/Admin';
 import AddOrder from './AddOrder/AddOrder';
 import Orders from './Orders/Orders';
 import OrdersMore from './OrdersMore/OrdersMore';
+import EditOrder from './EditOrder/EditOrder';
 
 export {
   Main,
@@ -15,4 +16,5 @@ export {
   AddOrder,
   Orders,
   OrdersMore,
+  EditOrder,
 }

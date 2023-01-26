@@ -24,6 +24,7 @@ const LayoutRoutes = () => {
           <Route path='/addorder' element={<LayoutPages.AddOrder />} />
           <Route path='/orders' element={<LayoutPages.Orders />} />
           <Route path='/orders/:id' element={<LayoutPages.OrdersMore />} />
+          <Route path='/orders/edit/:id' element={<LayoutPages.EditOrder />} />
           <Route path='/addcourier' element={<LayoutPages.AddCourier />} />
           <Route path='/couriers' element={<LayoutPages.Couriers />} />
           <Route path='/admin' element={<LayoutPages.Admin />} />

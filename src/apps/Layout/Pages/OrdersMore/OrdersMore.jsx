@@ -1,16 +1,18 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { Title } from '../../../../components/Title/Title'
-import { collection, doc } from 'firebase/firestore';
+import { collection, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../../../configs';
 import { getDoc } from 'firebase/firestore';
 import { BiDetail } from 'react-icons/bi';
 import { AiOutlineQrcode, AiFillPhone } from 'react-icons/ai';
 import { MdLocationPin } from 'react-icons/md'
-import { Divider } from '@mui/material';
-
-import './OrdersMore.css'
+import { Divider, Button, ButtonGroup } from '@mui/material';
 import { Loader } from '../../../../components/Loader/Loader';
+import { AiFillDelete } from 'react-icons/ai';
+import { VscError } from 'react-icons/vsc';
+import { FiEdit } from 'react-icons/fi';
+import './OrdersMore.css'
 
 const OrdersMore = () => {
 
@@ -21,19 +23,24 @@ const OrdersMore = () => {
   const getOrder = async () => {
     const docRef = doc(db, 'orders', `${id}`)
     const docSnap = await getDoc(docRef)
-    console.log(docSnap)
     setOrder({ ...docSnap.data(), id: docSnap.id })
   }
 
-  // const deleteOrder = (order) => {
-  //   ref.doc(order?.id).delete()
-  // }
+  const deleteOrder = async (order) => {
+    try {
+      const orderRef = doc(db, 'orders', `${order?.id}`)
+      await deleteDoc(orderRef)
+      await alert('Заказ удален')
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
+  const navigate = useNavigate()
 
   React.useEffect(() => {
     getOrder()
   }, [])
-
 
   return (
     <>
@@ -42,8 +49,8 @@ const OrdersMore = () => {
         <div className="container-inner">
           {
             !order
-              ? <Loader />
-              : <div className="orders-more-block">
+              ? <Loader /> :
+              <div className="orders-more-block">
                 <div className='orders-more-heading'>
                   <AiOutlineQrcode size={'20px'} />
                   <p>ID: {id}</p>
@@ -151,6 +158,37 @@ const OrdersMore = () => {
                       </li>
                     </ul>
                   </div>
+                </div>
+                <Divider />
+                <div className="order-more-btns">
+                  <ButtonGroup sx={{ "gap": "4px" }}>
+                    <Button
+                      variant='contained'
+                      color='success'
+                      sx={{ "gap": "4px" }}
+                      onClick={() => navigate(`/orders/edit/${id}`)}
+                    >
+                      Редактировать
+                      <FiEdit />
+                    </Button>
+                    <Button
+                      variant='contained'
+                      color='error'
+                      sx={{ "gap": "4px" }}
+                      onClick={e => deleteOrder(order)}
+                    >
+                      Удалить заказ
+                      <AiFillDelete />
+                    </Button>
+                    <Button
+                      variant='contained'
+                      color='error'
+                      sx={{ "gap": "4px" }}
+                    >
+                      Отменить заказ
+                      <VscError />
+                    </Button>
+                  </ButtonGroup>
                 </div>
               </div>
           }

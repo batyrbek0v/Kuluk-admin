@@ -1,16 +1,32 @@
 import React from 'react'
-import { Title } from '../../../../components/Title/Title'
-import './AddOrder.css'
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import { Button, TextField, MenuItem, Box } from '@mui/material';
-import { orderTariff, payment, paymentPerson, paymentStatus, typeOfOrder } from '../../../../components/Utils';
+import { Title } from './../../../../components/Title/Title';
+import { FiEdit } from 'react-icons/fi';
+import { Loader } from './../../../../components/Loader/Loader';
+import { TextField, Box, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { FormValidation } from './../../../../components/Form/FormValidation/exports';
-import { addDoc, collection, doc, getDoc, getDocs, query, QuerySnapshot, setDoc, where } from 'firebase/firestore';
+import { Button } from '@mui/material';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  QuerySnapshot,
+  setDoc,
+  updateDoc,
+  where
+} from 'firebase/firestore';
 import { db } from '../../../../configs';
-import { Loader } from '../../../../components/Loader/Loader';
+import { FormValidation } from '../../../../components/Form/FormValidation/exports';
+import { orderTariff, paymentPerson, paymentStatus, typeOfOrder } from '../../../../components/Utils';
+import { payment } from './../../../../components/Utils/index';
+import { useParams } from 'react-router-dom';
 
-const AddOrder = () => {
+const EditOrder = () => {
+
+
+  const { id } = useParams()
 
   const {
     register,
@@ -19,16 +35,15 @@ const AddOrder = () => {
     formState: { errors }
   } = useForm()
 
-  const date = new Date()
+  const citiesRef = collection(db, "city")
+  const villageRef = collection(db, "village")
+
+  const [order, setOrder] = React.useState(null)
   const [city, setCity] = React.useState(null)
   const [cityId, setCityId] = React.useState('')
   const [cityId2, setCityId2] = React.useState('')
   const [district, setDistrict] = React.useState(null)
   const [district2, setDistrict2] = React.useState(null)
-
-  const citiesRef = collection(db, "city")
-
-  const villageRef = collection(db, "village")
 
   const handleChange = (e) => {
     setCityId(e.target.value)
@@ -37,12 +52,16 @@ const AddOrder = () => {
     setCityId2(e.target.value)
   }
 
+  const getOrders = async () => {
+    const docRef = doc(db, 'orders', `${id}`)
+    const docSnap = await getDoc(docRef)
+    setOrder({ ...docSnap.data(), id: docSnap.id })
+  }
 
 
-
-  const handlePostOrder = async (order) => {
+  const handleEditOrder = async (order) => {
     try {
-      const docRef = await addDoc(collection(db, 'orders'),
+      const orderRef = updateDoc(doc(db, 'orders', `${id}`),
         {
           addressFrom: {
             address: order.fromAdress,
@@ -75,7 +94,6 @@ const AddOrder = () => {
           cityFilter: cityId[0],
           courierOne: "",
           courierTwo: "",
-          dateCreated: date,
           packageType: order.orderType,
           paymentMethod: order.payment,
           paymentStatus: order.paymentStatus,
@@ -86,7 +104,6 @@ const AddOrder = () => {
           sender: order.fromPhone,
           senderName: order.fromName,
           senderPhone: order.fromPhone,
-          status: "status_new",
           whoPays: order.paymentPerson,
         }
       )
@@ -97,8 +114,9 @@ const AddOrder = () => {
     }
   }
 
-  React.useEffect(() => {
 
+  React.useEffect(() => {
+    getOrders()
     const getCity = async () => {
       const data = await getDocs(citiesRef)
       setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
@@ -121,15 +139,10 @@ const AddOrder = () => {
   }, [cityId, cityId2])
 
 
-  const sortCity = city?.sort((a, b) => {
-    if (a['id'] < b['id']) return -1
-  })
-
-
   return (
     <>
       <div className="container">
-        <Title title={'Добавить заказ'} icon={<LibraryAddIcon fontSize='meduim' />} />
+        <Title title={'Редактирование заказа'} icon={<FiEdit />} />
         {
           !city
             ? <Loader />
@@ -149,6 +162,7 @@ const AddOrder = () => {
                       type="number"
                       helperText={errors?.fromPhone && 'Масимум 10 символов'}
                       error={errors?.fromPhone && true}
+                      defaultValue={order?.sender}
                       {...register('fromPhone', {
                         required: FormValidation.RequiredInput.required,
                         maxLength: 10
@@ -162,6 +176,7 @@ const AddOrder = () => {
                       placeholder='Имя отправителя'
                       helperText={errors?.fromName?.message}
                       error={errors?.fromName && true}
+                      defaultValue={order?.senderName}
                       {...register('fromName', {
                         required: FormValidation.RequiredInput.required,
                       })
@@ -170,11 +185,11 @@ const AddOrder = () => {
                     <TextField
                       id="filled-select-currency"
                       select
-                      label="Город/район"
+                      label={`Город/${order?.addressFrom.cityName}`}
                       helperText="Выберите город"
                       variant="outlined"
                       size="small"
-                      defaultValue={'1,г. Бишкек'}
+                      defaultValue={order?.addressFrom.city}
                       onChange={handleChange}
                     >
                       {
@@ -198,9 +213,7 @@ const AddOrder = () => {
                       placeholder='Введите село/микрорайон'
                       defaultValue={''}
                       disabled={!cityId ? true : false}
-                      {...register('fromDistrict', {
-                        required: FormValidation.RequiredInput.required
-                      })
+                      {...register('fromDistrict')
                       }
                     >
                       {
@@ -218,6 +231,7 @@ const AddOrder = () => {
                       placeholder='Адрес'
                       error={errors?.fromAdress ? true : false}
                       helperText={errors ? errors?.fromAdress?.message : ''}
+                      defaultValue={order?.addressFrom.address}
                       {...register('fromAdress', {
                         required: FormValidation.RequiredInput.required
                       })
@@ -240,6 +254,7 @@ const AddOrder = () => {
                       type="number"
                       helperText={errors?.toPhone && 'Масимум 10 символов'}
                       error={errors?.toPhone && true}
+                      defaultValue={order?.receiver}
                       {...register('toPhone', {
                         required: FormValidation.RequiredInput.required,
                         maxLength: 10
@@ -253,6 +268,7 @@ const AddOrder = () => {
                       placeholder='Имя получателя'
                       helperText={errors?.toName?.message}
                       error={errors?.toName && true}
+                      defaultValue={order?.receiverName}
                       {...register('toName', {
                         required: FormValidation.RequiredInput.required,
                       })
@@ -261,9 +277,9 @@ const AddOrder = () => {
                     <TextField
                       id="filled-select-currency2"
                       select
-                      label="Город/район"
-                      defaultValue={''}
-                      helperText="Выберите тип курьера"
+                      label={`Город/${order?.addressTo.cityName}`}
+                      defaultValue={order?.addressTo.cityName}
+                      helperText="Выберите город"
                       variant="outlined"
                       size="small"
                       error={errors?.toCity && true}
@@ -286,9 +302,7 @@ const AddOrder = () => {
                       // defaultValue={district2 && district2[0]?.name}
                       defaultValue={''}
                       disabled={!cityId2 ? true : false}
-                      {...register('toDistrict', {
-                        required: FormValidation.RequiredInput.required
-                      })
+                      {...register('toDistrict')
                       }
                     >
                       {
@@ -306,6 +320,7 @@ const AddOrder = () => {
                       placeholder='Адрес'
                       error={errors?.toAdress && true}
                       helperText={errors?.toAdress?.message}
+                      defaultValue={order?.addressTo.address}
                       {...register('toAdress', {
                         required: FormValidation.RequiredInput.required,
                       })
@@ -326,7 +341,7 @@ const AddOrder = () => {
                         id="filled-select-currency"
                         select
                         label="Выберите тип посылки"
-                        defaultValue={typeOfOrder[0].value}
+                        defaultValue={order?.packageType}
                         variant="outlined"
                         size="small"
                         // {...register('city')}
@@ -347,7 +362,7 @@ const AddOrder = () => {
                         id="filled-select-currency"
                         select
                         label="Выберите тариф"
-                        defaultValue={orderTariff[0].value}
+                        defaultValue={order?.tariff.name}
                         variant="outlined"
                         size="small"
                         {...register('orderTariff', {
@@ -366,7 +381,7 @@ const AddOrder = () => {
                       id="outlined-basic"
                       label="Выкуп (0 если без выкупа)"
                       variant="outlined"
-                      defaultValue={0}
+                      defaultValue={order?.redemption}
                       placeholder='0'
                       type="number"
                       {...register('redemption', {
@@ -378,7 +393,7 @@ const AddOrder = () => {
                       id="outlined-basic"
                       label="Введите стоимость доставки"
                       variant="outlined"
-                      defaultValue={150}
+                      defaultValue={order?.cost}
                       type="number"
                       {...register('cost', {
                         required: FormValidation.RequiredInput.required,
@@ -389,7 +404,9 @@ const AddOrder = () => {
                       id="filled-select-currency"
                       select
                       label="Выберите кто оплачивает"
-                      defaultValue={paymentPerson[0].value}
+                      defaultValue={
+                        order?.whoPays == '1' ? paymentPerson[0].value : paymentPerson[1].value
+                      }
                       variant="outlined"
                       size="small"
                       {...register('paymentPerson', {
@@ -407,9 +424,16 @@ const AddOrder = () => {
                       id="filled-select-currency"
                       select
                       label="Метод оплаты"
-                      defaultValue={payment[0].value}
                       variant="outlined"
                       size="small"
+                      defaultValue={
+                        order?.paymentMethod == 'cash' && payment[0].value
+                        || order?.paymentMethod == 'mbank' && payment[1].value
+                        || order?.paymentMethod == 'optima' && payment[2].value
+                        || order?.paymentMethod == 'elsom' && payment[3].value
+                        || order?.paymentMethod == 'odengi' && payment[4].value
+                        || order?.paymentMethod == 'other' && payment[5].value
+                      }
                       {...register('payment', {
                         required: FormValidation.RequiredInput.required,
                       })
@@ -452,6 +476,7 @@ const AddOrder = () => {
                       label="Коментарии"
                       multiline
                       rows={7}
+                      defaultValue={order?.comments}
                       {...register('commits', {
                         required: FormValidation.RequiredInput.required,
                       })
@@ -461,7 +486,7 @@ const AddOrder = () => {
                 </div>
               </div>
               <Button
-                onClick={handleSubmit(data => handlePostOrder(data))}
+                onClick={handleSubmit(data => handleEditOrder(data))}
                 size='large'
                 variant='contained'
                 style={{ background: '#66bb6a' }}
@@ -475,4 +500,4 @@ const AddOrder = () => {
   )
 }
 
-export default AddOrder
+export default EditOrder
