@@ -9,7 +9,6 @@ import { handleSignOut } from '../../configs'
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export const sideList = [
@@ -19,7 +18,6 @@ export const sideList = [
   { id: 4, icon: <PersonAddAlt1Icon />, title: 'Добавить курьера', path: '/addcourier' },
   { id: 5, icon: <BsTable />, title: 'Таблица курьеров', path: '/couriers' },
   { id: 6, icon: <AdminPanelSettingsIcon />, title: 'Админ панель', path: '/admin' },
-  { id: 7, icon: <ExitToAppIcon />, title: 'Выйти', event: handleSignOut },
 ]
 
 export const courierType = [
@@ -94,12 +92,8 @@ export const courierTableList = [
 // SORT-BY-COST
 
 export const sortByCostList = [
-  // { id: 1, name: 'Все', title: 'Отправитель', },
-  // { id: 2, name: 'По убыванию', title: 'Отправитель', },
-  // { id: 3, name: 'По возростанию', title: 'Получатель', },
-  // { id: 2, name: 'Все', title: 'Получатель', },
-  { id: 1, name: 150, title: 'Получатель', },
-  { id: 2, name: 180, title: 'Получатель', },
-  { id: 3, name: 220, title: 'Получатель', },
-  { id: 4, name: 300, title: 'Получатель', },
+  { id: 1, name: 150, title: '150⃀', },
+  { id: 2, name: 180, title: '180⃀', },
+  { id: 3, name: 220, title: '220⃀', },
+  { id: 4, name: 300, title: '300⃀', },
 ]

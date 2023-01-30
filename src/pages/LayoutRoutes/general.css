@@ -1,6 +1,5 @@
 .general-container {
   display: flex;
-  gap: 20px;
-  padding: 2rem;
-  
+  padding: 2px 4px;
+
 }

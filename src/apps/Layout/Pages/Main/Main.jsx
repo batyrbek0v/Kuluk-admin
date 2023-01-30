@@ -1,14 +1,16 @@
-import { Button } from '@mui/material'
 import React from 'react'
-import { handleSignOut } from '../../../../configs'
-import Header from './../../../../components/Header/Header';
+import { Title } from '../../../../components/Title/Title'
 
 const Main = () => {
 
   return (
     <React.Fragment>
-      <h1>Вы авторизовались</h1>
-      <br />
+      <div className="container">
+        <Title title={'Статистика'} />
+        <div className="container-inner">
+
+        </div>
+      </div>
     </React.Fragment>
   )
 }

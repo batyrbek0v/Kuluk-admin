@@ -1,8 +1,8 @@
 import React from 'react'
-import { Route, Routes, useNavigate } from 'react-router-dom'
 import * as LayoutPages from '../../apps/Layout/Pages'
-import Header from '../../components/Header/Header'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import { useAuth } from './../../provider/useAuth';
+import Navbar from './../../components/Navbar/Navbar';
 import './general.css'
 
 
@@ -18,7 +18,7 @@ const LayoutRoutes = () => {
   return (
     <>
       <div className='general-container'>
-        <Header />
+        <Navbar />
         <Routes>
           <Route path='/' element={<LayoutPages.Main />} />
           <Route path='/addorder' element={<LayoutPages.AddOrder />} />

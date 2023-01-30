@@ -35,7 +35,7 @@ const Card = ({
 
   return (
     <>
-      <Link className='link' to={id}>
+      <Link className='link' to={id && id}>
         <div className='orders-card'>
           <div className="orders-card-heading">
             <div className="orders-date">
@@ -50,7 +50,7 @@ const Card = ({
             </div>
             <div className="orders-date">
               <AiOutlineQrcode size={'20px'} />
-              <p>{id.length > 10 && id.slice(0, 12)}</p>
+              <p>{id?.length > 10 && id?.slice(0, 12)}</p>
             </div>
           </div>
           <div className="orders-card-body">
@@ -81,8 +81,8 @@ const Card = ({
             <Divider />
             <div className='orders-info-block'>
               <div className='orders-info'>
-                <p>{tariff.name}</p>
-                <p>{tariff.cost}⃀</p>
+                <p>{tariff?.name}</p>
+                <p>{tariff?.cost}⃀</p>
               </div>
               <div className='orders-info'>
                 <p>Выкуп</p>

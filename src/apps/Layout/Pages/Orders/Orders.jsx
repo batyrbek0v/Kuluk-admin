@@ -1,14 +1,16 @@
 import React from 'react'
 import { Title } from '../../../../components/Title/Title';
-import { collection, getDocs, } from 'firebase/firestore';
-import { db } from '../../../../configs';
+import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import Card from '../../../../components/Card/Card';
 import { Loader } from '../../../../components/Loader/Loader';
-import { Pagination, PaginationItem, Stack, TextField, MenuItem } from '@mui/material';
-import { IoArrowBackCircleOutline, IoArrowForwardCircleOutline } from 'react-icons/io5';
+import { Pagination, PaginationItem, Stack, TextField, MenuItem, Button } from '@mui/material';
+import { GrUpdate } from 'react-icons/gr';
 import { FaClipboardList } from 'react-icons/fa'
-import './Orders.css'
 import { sortByCostList } from '../../../../components/Utils';
+import { Refresh } from '@mui/icons-material';
+import { orderRef } from './../../../../components/Utils/fireStoreRef';
+import './Orders.css'
+import { typeOfOrder } from './../../../../components/Utils/index';
 
 
 
@@ -19,46 +21,70 @@ const Orders = () => {
   const [date, setDate] = React.useState(0)
   const [page, setPage] = React.useState(1)
   const [cost, setCost] = React.useState(0)
+  const [type, setType] = React.useState('')
   const [input, setInput] = React.useState('')
 
 
   // GET-ORDERS
-  const getOrders = async () => {
-    const docRef = collection(db, 'orders')
-    const data = await getDocs(docRef)
-    setOrder(data?.docs?.map(doc => ({ ...doc.data(), id: doc?.id })))
-    setSortOrder(data?.docs?.map(doc => ({ ...doc.data(), id: doc?.id })).reverse())
+  React.useEffect(() => {
+    const unSub = onSnapshot(orderRef, snapshot => {
+      setOrder(snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id
+      })))
+    })
+    return () => unSub()
+  },[page])
+
+// ---------------------------------
+  // SORT-ORDERS-BY-COST
+  const costSort = async () => {
+    const sortQuery = query(orderRef, where('cost', '==', cost)) 
+    const base = await getDocs(sortQuery)
+    .then(res => setOrder(
+      res?.docs?.map(
+        doc => ({
+          ...doc?.data(),
+          id: doc?.id
+        })
+      )))
+    .catch(err => console.error(err))
+  }
+  // SORT-ORDERS-BY-TYPE
+  const typeSort = async (value) => {
+    const sortQuery = query(orderRef, where('packageType', '==', type)) 
+    const base = await getDocs(sortQuery)
+    .then(res => setOrder(
+        res?.docs?.map(
+          doc => ({
+            ...doc?.data(),
+            id: doc?.id
+          })
+        )))
+    .catch(err => console.error(err))
   }
 
-  // ------------------------
-  // FILTER-SEARCH  
-  // const filterSearch = order?.filter(item => {
-  //     return item.senderName?.toLowerCase().includes(input.toLowerCase())
-  //     || item.adressForm?.cityName.toLowerCase().includes(input.toLowerCase())
-  //   })
-
-  // 
-    
-  // FOR-PAGINATION
+  // PAGINATION
   const PAGE_SIZE = 6
-  const TOTAL_PAGE = sortOrder?.length / PAGE_SIZE
+  const TOTAL_PAGE = order?.length / PAGE_SIZE
   const CEIL_PAGE = Math.ceil(TOTAL_PAGE)
   const handleChangePage = (event, page) => setPage(page)
   //-------------------------------
  
-  // SORTING-BY-COST
+  console.log(order)
+  
   React.useEffect(() => {
-    const sorting = order?.filter(item => item.cost == cost)
-    sorting && setSortOrder(sorting)
+    costSort()
   }, [page, cost])
+
+  React.useEffect(() => {
+    typeSort()
+  }, [page, type])
   
 
-  React.useEffect(() => {
-    getOrders()
-  }, [page])
+ 
 
-
-  if(!sortOrder) return <Loader/>
+  // if(CEIL_PAGE === NaN) return <Loader/>
 
   return (
     <>
@@ -89,31 +115,51 @@ const Orders = () => {
               >
                 {sortByCostList.map((option) => (
                   <MenuItem key={option.id} value={option.name}>
+                    {option.title}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </div>
+            <div className="order-cost-sort">
+              <TextField
+                id="outlined-select-currency"
+                select
+                label="Сортировка по типу"
+                fullWidth
+                defaultValue=""
+                size='small'
+                onChange={e => setType(e.target.value)}
+              >
+                {typeOfOrder.map((option) => (
+                  <MenuItem key={option.id} value={option.value}>
                     {option.name}
                   </MenuItem>
                 ))}
               </TextField>
             </div>
+            <div>
+              {/* <Button variant='contained' onClick={unSub}> <Refresh/></Button> */}
+            </div>
           </div>
           <div className='orders-card-wrapper'>
             {
-              !sortOrder
+              !order
                 ? <Loader />
-                : sortOrder
+                : order
                   ?.slice((page - 1) * PAGE_SIZE, (page - 1) * PAGE_SIZE + PAGE_SIZE)
-                  .map(item => <Card {...item} key={item.id} />)
+                  .map(item => <Card {...item} key={item?.id} />)
                   .reverse()
+                  
             }
           </div>
             <Stack spacing={2} mt={4}>
                 <Pagination
-                  count={sortOrder && CEIL_PAGE}
+                  count={CEIL_PAGE}
                   onChange={handleChangePage}
                   renderItem={(item) => (
-                    <PaginationItem {...item} />
-                  )}
-                />
-                
+                <PaginationItem {...item} />
+                )}
+              />
             </Stack>
         </div>
       </div>
@@ -140,6 +186,13 @@ export default Orders
   // }
   // console.log(`${getDate.day}.${getDate.month + 1}.${getDate.year},`, `${getDate.hour}:${getDate.minutes}`)
 
+  // ------------------------
+  // FILTER-SEARCH  
+  // const filterSearch = order?.filter(item => {
+  //     return item.senderName?.toLowerCase().includes(input.toLowerCase())
+  //     || item.adressForm?.cityName.toLowerCase().includes(input.toLowerCase())
+  //   })
 
+  // 
     
     // -----------------------

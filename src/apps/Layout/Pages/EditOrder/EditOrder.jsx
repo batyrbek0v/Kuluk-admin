@@ -116,7 +116,7 @@ const EditOrder = () => {
 
 
   React.useEffect(() => {
-    getOrders()
+
     const getCity = async () => {
       const data = await getDocs(citiesRef)
       setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
@@ -132,6 +132,8 @@ const EditOrder = () => {
       const base = await getDocs(q)
       setDistrict2(base?.docs?.map((doc) => ({ ...doc?.data() })))
     }
+
+    getOrders()
     getCity()
     getDist(cityId)
     getDist2(cityId2)

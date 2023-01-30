@@ -30,7 +30,6 @@ const TTable = () => {
     getBase()
   }, [])
 
-  console.log(base)
   return (
     <>
       <div style={{ width: '100%' }} className='table-container'>

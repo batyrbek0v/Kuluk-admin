@@ -4,6 +4,7 @@
 
 .orders-card {
   width: 370px;
+  height: 280px;
   display: flex;
   flex-direction: column;
   gap: 20px;
