@@ -1,13 +1,17 @@
 import React from 'react'
-import './Card.css'
-import { AiOutlineFieldTime, AiOutlineQrcode, AiOutlineSend, AiFillPhone } from 'react-icons/ai'
-import { MdLocationPin } from 'react-icons/md'
-import { IoSend } from 'react-icons/io5'
-import { Divider } from '@mui/material';
-import { Link } from 'react-router-dom'
+import './Card.scss'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Menu, MenuItem } from '@mui/material';
+import { useNavigate } from 'react-router-dom'
+import { MdDeleteOutline } from 'react-icons/md';
+import { FiEdit, FiMoreHorizontal } from 'react-icons/fi'
 
 const Card = ({
   id,
+  dateCreated,
+  status,
+  packageType,
+  paymentMethod,
+  paymentStatus,
   addressFrom,
   addressTo,
   sender,
@@ -15,87 +19,163 @@ const Card = ({
   receiver,
   receiverName,
   redemption,
-  dateCreated,
-  status,
-  tariff
+  tariff,
+  cost
 }) => {
 
-  // const [date, setDate] = React.useState(0)
+  const dateTransform = new Date(+dateCreated?.seconds * 1000)
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate()
 
-  // const dateTransform = new Date(+dateCreated?.seconds * 1000)
+  const time = {
+    day: dateTransform?.getUTCDate(),
+    month: dateTransform?.getMonth(),
+    year: dateTransform?.getFullYear(),
+    hour: dateTransform?.getHours(),
+    minutes: dateTransform?.getMinutes(),
+  }
+  const openAction = Boolean(anchorEl)
 
-  // const time = {
-  //   day: dateTransform?.getDate(),
-  //   month: dateTransform?.getUTCMonth(),
-  //   year: dateTransform?.getFullYear(),
-  //   hour: dateTransform?.getHours(),
-  //   minutes: dateTransform?.getMinutes(),
-  // }
-  // console.log(time)
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleOpen = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClosePopUp = () => {
+    setOpen(false);
+    setAnchorEl(null)
+  };
+
+  console.log(open)
 
   return (
     <>
-      <Link className='link' to={id && id}>
-        <div className='orders-card'>
-          <div className="orders-card-heading">
-            <div className="orders-date">
-              <AiOutlineFieldTime size={'20px'} />
-              <time>
-                {/* {time.day}
-                .{time.month + 1}
-                .{time.year}
-                {time.hour}
-                :{time.minutes} */}
-              </time>
-            </div>
-            <div className="orders-date">
-              <AiOutlineQrcode size={'20px'} />
-              <p>{id?.length > 10 && id?.slice(0, 12)}</p>
-            </div>
-          </div>
-          <div className="orders-card-body">
-            <div className="orders-adress-block">
-              <IoSend color={'#4F92DC'} />
-              <div className='orders-adress'>
-                <div>
-                  <p>{sender} ({senderName})</p>
-                  <address>{addressFrom?.address}</address>
-                </div>
-                <span href={'tel:' + sender} className='adress-phone'>
-                  <AiFillPhone />
-                </span>
-              </div>
-            </div>
-            <div className="orders-adress-block">
-              <MdLocationPin color='#23A42F' size={'20px'} />
-              <div className='orders-adress'>
-                <div>
-                  <p>{receiver} ({receiverName})</p>
-                  <address>{addressTo?.address}</address>
-                </div>
-                <span href='tel:0700923082' className='adress-phone'>
-                  <AiFillPhone />
-                </span>
-              </div>
-            </div>
-            <Divider />
-            <div className='orders-info-block'>
-              <div className='orders-info'>
-                <p>{tariff?.name}</p>
-                <p>{tariff?.cost}⃀</p>
-              </div>
-              <div className='orders-info'>
-                <p>Выкуп</p>
-                <p>{redemption}⃀</p>
-              </div>
-              <div className='orders-info'>
-                <p>Статус</p>
-                <p>У курьера</p>
-              </div>
-            </div>
-          </div>
+      {/* <Link className='link' to={id && id}> */}
+      <div
+        className={'orders-card'}
+        onDoubleClick={() => navigate(id)}
+      >
+        <div className="orders-card-values">
+          <p>{id?.length > 10 && id?.slice(0, 12)}...</p>
         </div>
-      </Link>
+        <div className="orders-card-values">
+          <time>
+            {time.day < 10 && '0'}{time.day}
+            .{time.month < 10 && '0'}{time.month + 1}
+            .{time.year} / {time.hour}:{time.minutes < 10 && '0'}{time.minutes}
+          </time>
+        </div>
+        <div className='orders-card-values'>
+          <p>
+            {
+              status == 'status_new' && 'Новый'
+              || status == 'status_confirmed' && 'Подтвержден'
+              || status == 'status_arrived_sender' && 'Подтвержден'
+              || status == 'status_on_courier' && 'У курьера'
+              || status == 'status_at_sorting_center' && 'B сорт.центре'
+              || status == 'status_delivered' && 'Доставлен'
+              || status == 'status_rejected' && 'Отклонен'
+              || status == 'status_cancelled' && 'Отменен'
+            }
+          </p>
+        </div>
+        <div className='orders-card-values'>
+          <p>
+            {
+              packageType == 'document' && 'Документ'
+              || packageType == 'medicine' && 'Лекарство'
+              || packageType == 'large_box' && 'Большая коробка'
+              || packageType == 'small_box' && 'Мал-ая коробка'
+              || packageType == 'box' && 'Коробка'
+              || packageType == 'food' && 'Еда'
+              || packageType == 'other' && 'Другое'
+            }
+          </p>
+        </div>
+        <div className='orders-card-values'>
+          <p>{cost}⃀</p>
+        </div>
+        <div className='orders-card-values'>
+          <p>
+            {
+              paymentMethod == 'cash' && 'Наличными'
+              || paymentMethod == 'mbank' && 'МБАНК'
+              || paymentMethod == 'optima' && 'Оптима'
+              || paymentMethod == 'odengi' && 'О!Деньги'
+              || paymentMethod == 'elsom' && 'Элсом'
+              || paymentMethod == 'other' && 'Другое'
+            }
+          </p>
+        </div>
+        <div className='orders-card-values'>
+          <p>
+            {paymentStatus == false ? 'Не оплачен' : 'Оплачен'}
+          </p>
+        </div>
+        <div className="order-card-actions">
+          <IconButton
+            id="long-button"
+            aria-haspopup="true"
+            aria-controls={openAction ? 'long-menu' : undefined}
+            aria-expanded={openAction ? 'true' : undefined}
+            className="order-card-actions-btn"
+            onClick={handleOpen}
+          >
+            <FiMoreHorizontal />
+          </IconButton>
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              'aria-labelledby': 'long-button',
+            }}
+            anchorEl={anchorEl}
+            open={openAction}
+            onClose={handleClosePopUp}
+            PaperProps={{
+              style: {
+                width: '5ch',
+              },
+            }}
+          >
+            <MenuItem onClick={handleClickOpen}>
+              <div className='order-card-actions-menu'>
+                <MdDeleteOutline size={'22'} color='#ef5350' />
+              </div>
+            </MenuItem>
+            <MenuItem onClick={() => navigate(`/orders/edit/${id}`)} className="order-card-actions-menu">
+              <div className='order-card-actions-menu'>
+                <FiEdit size={'18px'} color='teal' />
+              </div>
+            </MenuItem>
+          </Menu>
+        </div>
+      </div>
+      <Dialog
+        open={open}
+        onClose={handleClosePopUp}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Вы уверены что хотите удалить заказ?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Let Google help apps determine location. This means sending anonymous
+            location data to Google, even when no apps are running.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClosePopUp}>Отмена</Button>
+          <Button onClick={handleClosePopUp} autoFocus>
+            Удалить
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* </Link> */}
     </>
   )
 }

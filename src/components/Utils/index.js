@@ -16,7 +16,7 @@ export const sideList = [
   { id: 2, icon: <LibraryAddIcon fontSize="small" />, title: 'Добавить заказ', path: '/addorder' },
   { id: 3, icon: <FaClipboardList size={"18px"} />, title: 'Список заказов', path: '/orders' },
   { id: 4, icon: <PersonAddAlt1Icon />, title: 'Добавить курьера', path: '/addcourier' },
-  { id: 5, icon: <BsTable />, title: 'Таблица курьеров', path: '/couriers' },
+  { id: 5, icon: <BsTable />, title: 'Список курьеров', path: '/couriers' },
   { id: 6, icon: <AdminPanelSettingsIcon />, title: 'Админ панель', path: '/admin' },
 ]
 
@@ -83,7 +83,23 @@ export const courierTableList = [
     field: 'number', headerName: 'Номер телефона', sortable: false, width: 160,
   },
 ];
-// COURIERS-AND-ORDER-TABLE=====================
+// ORDER-TABLE=====================
+
+export const orderLabels = [
+  { id: 1, name: '#ID' },
+  { id: 2, name: 'Дата' },
+  { id: 3, name: 'Статус' },
+  { id: 4, name: 'Тип заказа' },
+  { id: 5, name: 'Стоимость' },
+  { id: 6, name: 'Метод оплаты' },
+  { id: 7, name: 'Статус оплаты' },
+]
+export const columnCount = [
+  { id: 1, name: 10 },
+  { id: 2, name: 15 },
+  { id: 3, name: 20 },
+]
+
 
 // ---------------------------------------------------------------
 

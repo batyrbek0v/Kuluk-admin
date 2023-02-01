@@ -1,0 +1,69 @@
+.container .container-inner {
+
+  .orders-sorting-header {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+    gap: 20px;
+    background-color: white;
+    box-shadow: 0 6px 6px rgb(194 202 255 / 30%);
+    padding: 0 1rem;
+
+    .order-search-block {
+      width: 370px;
+    }
+
+    .order-cost-sort {
+      width: 200px;
+    }
+  }
+
+  .orders-card-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: 20px;
+    background-color: white;
+    padding: 8px 0 1rem;
+    box-shadow:
+      rgba(194 202 255 / 30%) 0px 1px 2px 0px,
+      rgba(194 202 255 / 30%) 0px 2px 6px 2px;
+    border-radius: 12px;
+
+    .orders-card-header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      height: 60px;
+      gap: 20px;
+      padding: 0 1rem;
+
+      .orders-card-header-btn {
+        background-color: #3A46D6;
+      }
+    }
+
+    .orders-card-wrapper-labels {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 60px;
+      padding: 0 1rem;
+      gap: 12px;
+      background-color: #3a47d6f3;
+      color: white;
+
+      div {
+        width: 150px;
+        border-right: 2px solid #ccc;
+
+        &:nth-child(5) {
+          width: 100px;
+        }
+      }
+    }
+  }
+}

@@ -5,7 +5,7 @@ import { db } from '../../configs';
 import { DataGrid } from '@mui/x-data-grid';
 import { Loader } from '../Loader/Loader';
 import { FiRefreshCcw } from 'react-icons/fi';
-import '../Card/Card.css'
+import '../Card/Card.scss'
 
 
 const TTable = () => {

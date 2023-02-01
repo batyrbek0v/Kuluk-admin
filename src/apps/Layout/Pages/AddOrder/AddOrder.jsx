@@ -128,9 +128,9 @@ const AddOrder = () => {
   return (
     <>
       <div className="container">
-        <Header previous={'Статистика'} initial={'Добавить заказ'} />
+        <Header previous={'Статистика'} initial={'Добавление заказа'} />
+        <Title title={'Добавление заказа'} icon={<LibraryAddIcon fontSize='meduim' />} />
         <div className="container-inner">
-          <Title title={'Добавить заказ'} icon={<LibraryAddIcon fontSize='meduim' />} />
           {
             !city
               ? <Loader />

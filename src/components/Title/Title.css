@@ -1,6 +1,10 @@
 .general-title {
   font-size: 28px;
   color: #140810;
+  color: #0a172e;
+  color: #161925;
+
   font-weight: 900;
   text-transform: capitalize;
+  padding: 0 1.5rem;
 }
