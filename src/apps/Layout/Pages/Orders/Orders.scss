@@ -12,11 +12,19 @@
     padding: 0 1rem;
 
     .order-search-block {
-      width: 370px;
+      width: auto;
     }
 
-    .order-cost-sort {
+    .order-sort {
       width: 200px;
+
+      .order-sort-dareInput {
+        height: 39px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 150px;
+        padding: 12px 16px;
+      }
     }
   }
 
@@ -35,7 +43,7 @@
 
     .orders-card-header {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       height: 60px;
       gap: 20px;
@@ -59,6 +67,18 @@
       div {
         width: 150px;
         border-right: 2px solid #ccc;
+
+        &:nth-child(2) {
+          text-align: center;
+        }
+
+        &:nth-child(3) {
+          text-align: center;
+        }
+
+        &:nth-child(4) {
+          text-align: center;
+        }
 
         &:nth-child(5) {
           width: 100px;

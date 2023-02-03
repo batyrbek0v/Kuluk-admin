@@ -36,6 +36,8 @@ const Orders = () => {
   const [input, setInput] = React.useState('')
   const [column, setColumn] = React.useState(10)
 
+  const [test, setTest] = React.useState(null)
+
   const navigate = useNavigate()
 
   // GET-ORDERS
@@ -79,24 +81,35 @@ const Orders = () => {
         )))
     .catch(err => console.error(err))
   }
+  const timeSort = async (value) => {
+    const sortQuery = query(orderRef, where('dateCreated', '==', '2023')) 
+    const base = await getDocs(sortQuery)
+    .then(res => setTest(
+        res?.docs?.map(
+          doc => ({
+            ...doc?.data(),
+            id: doc?.id
+          })
+        )))
+    .catch(err => console.error(err))
+  }
 
   // PAGINATION
   const TOTAL_PAGE = order?.length / column
   const CEIL_PAGE = Math.ceil(TOTAL_PAGE)
   const handleChangePage = (event, page) => setPage(page)
   //-------------------------------
- 
   
   // React.useEffect(() => {
-  //   costSort()
-  // }, [page, cost])
+  //   timeSort()
+  // }, [])
 
   // React.useEffect(() => {
   //   typeSort()
   // }, [page, type])
   
-
   // if(CEIL_PAGE === NaN) return <Loader/>
+
 
   return (
     <>
@@ -109,7 +122,6 @@ const Orders = () => {
               <TextField
                 id="outlined-search"
                 label="Что вы ищите?"
-                fullWidth
                 type="search"
                 placeholder='Введите то что ищите'
                 size='small'
@@ -117,7 +129,7 @@ const Orders = () => {
                 sx={{'borderRadius': '20px'}}
               />
             </div>
-            <div className="order-cost-sort">
+            <div className="order-sort">
               <TextField
                 id="outlined-select-currency"
                 select
@@ -134,7 +146,7 @@ const Orders = () => {
                 ))}
               </TextField>
             </div>
-            <div className="order-cost-sort">
+            <div className="order-sort">
               <TextField
                 id="outlined-select-currency"
                 select
@@ -151,7 +163,7 @@ const Orders = () => {
                 ))}
               </TextField>
             </div>
-            <div className="order-cost-sort">
+            <div className="order-sort">
               <TextField
                 id="outlined-select-currency"
                 select
@@ -168,44 +180,50 @@ const Orders = () => {
                 ))}
               </TextField>
             </div>
-            <div>
-              {/* <Button variant='contained' onClick={unSub}> <Refresh/></Button> */}
+            <div className="order-sort">
+              <input 
+                className='order-sort-dareInput'
+                type="date" 
+                name="orderDate" 
+                id="orderDate" 
+                onChange={e => setDate(e.target.value)}
+              />
             </div>
           </div>
           <div className='orders-card-wrapper'>
             <div className='orders-card-header'>
-            <TextField
-                id="outlined-select-currency"
-                select
-                label="Колонны"
-                defaultValue={10}
-                size='small'
-                sx={{'width': '200px'}}
-                onChange={e => setColumn(e.target.value)}
-              >
-                {columnCount.map((option) => (
-                  <MenuItem key={option.id} value={option.name}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-            </TextField>
             <Button 
-              variant="contained" 
-              className='orders-card-header-btn'
-              onClick={() => navigate('/addorder')}
-            >
-              Создать новый заказ
-            </Button>
-            <Stack spacing={2} direction={'row'}>
-                <Pagination
-                  count={CEIL_PAGE}
-                  onChange={handleChangePage}
-                  shape="rounded"
-                  renderItem={(item) => (
-                <PaginationItem {...item} />
-                )}
-              />
-            </Stack>
+                variant="contained" 
+                className='orders-card-header-btn'
+                onClick={() => navigate('/addorder')}
+              >
+                  Создать новый заказ
+              </Button>
+              <Stack spacing={2} direction={'row'}>
+              <TextField
+                  id="outlined-select-currency"
+                  select
+                  label="Колонны"
+                  defaultValue={10}
+                  size='small'
+                  sx={{'width': '200px'}}
+                  onChange={e => setColumn(e.target.value)}
+                >
+                  {columnCount.map((option) => (
+                    <MenuItem key={option.id} value={option.name}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+              </TextField>
+                  <Pagination
+                    count={CEIL_PAGE}
+                    onChange={handleChangePage}
+                    shape="rounded"
+                    renderItem={(item) => (
+                  <PaginationItem {...item} />
+                  )}
+                />
+              </Stack>
             </div>
             <div className="orders-card-wrapper-labels">
               {
@@ -220,10 +238,9 @@ const Orders = () => {
               !order
                 ? <Loader />
                 : order
-                  ?.slice((page - 1) * column, (page - 1) * column + column)
+                ?.sort((a, b) => a['dateCreated']?.seconds > b['dateCreated']?.seconds && -1)
+                .slice((page - 1) * column, (page - 1) * column + column)
                   .map(item => <Card {...item} key={item?.id} />)
-                  .reverse()
-                  
             }
           </div>
         </div>

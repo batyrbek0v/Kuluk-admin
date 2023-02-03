@@ -2,7 +2,7 @@ import React from 'react'
 import { Title } from '../../../../components/Title/Title'
 import './AddOrder.css'
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import { Button, TextField, MenuItem, Box } from '@mui/material';
+import { Button, TextField, MenuItem, Box, Backdrop, CircularProgress } from '@mui/material';
 import { orderTariff, payment, paymentPerson, paymentStatus, typeOfOrder } from '../../../../components/Utils';
 import { useForm } from 'react-hook-form';
 import { FormValidation } from './../../../../components/Form/FormValidation/exports';
@@ -10,6 +10,7 @@ import { addDoc, collection, doc, getDoc, getDocs, query, QuerySnapshot, setDoc,
 import { db } from '../../../../configs';
 import { Loader } from '../../../../components/Loader/Loader';
 import { Header } from '../../../../components/Header/Header';
+import { citiesRef, villageRef } from '../../../../components/Utils/fireStoreRef';
 
 const AddOrder = () => {
 
@@ -21,15 +22,16 @@ const AddOrder = () => {
   } = useForm()
 
   const date = new Date()
+
   const [city, setCity] = React.useState(null)
   const [cityId, setCityId] = React.useState('')
   const [cityId2, setCityId2] = React.useState('')
   const [district, setDistrict] = React.useState(null)
   const [district2, setDistrict2] = React.useState(null)
+  const [open, setOpen] = React.useState(false)
+  // const citiesRef = collection(db, "city")
 
-  const citiesRef = collection(db, "city")
-
-  const villageRef = collection(db, "village")
+  // const villageRef = collection(db, "village")
 
   const handleChange = (e) => {
     setCityId(e.target.value)
@@ -38,9 +40,9 @@ const AddOrder = () => {
     setCityId2(e.target.value)
   }
 
-
   const handlePostOrder = async (order) => {
     try {
+      setOpen(!open)
       const docRef = await addDoc(collection(db, 'orders'),
         {
           addressFrom: {
@@ -77,7 +79,7 @@ const AddOrder = () => {
           dateCreated: date,
           packageType: order.orderType,
           paymentMethod: order.payment,
-          paymentStatus: order.paymentStatus,
+          paymentStatus: order.paymentStatus == 'false' ? false : true,
           receiver: order.toPhone,
           receiverName: order.toName,
           receiverPhone: order.toPhone,
@@ -93,6 +95,7 @@ const AddOrder = () => {
       console.log(e.message)
     } finally {
       reset()
+      setOpen(false)
     }
   }
 
@@ -102,11 +105,13 @@ const AddOrder = () => {
       const data = await getDocs(citiesRef)
       setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
     }
-
     const getDist = async () => {
       const q = query(villageRef, where("district", "==", cityId[0] && cityId[0]));
       const base = await getDocs(q)
-      setDistrict(base?.docs?.map((doc) => ({ ...doc?.data() })))
+        .then(res => {
+          setDistrict(res?.docs?.map((doc) => ({ ...doc?.data() })))
+        }
+        )
     }
     const getDist2 = async () => {
       const q = query(villageRef, where("district", "==", cityId2[0] && cityId2[0]));
@@ -201,10 +206,7 @@ const AddOrder = () => {
                         placeholder='Введите село/микрорайон'
                         defaultValue={''}
                         disabled={!cityId ? true : false}
-                        {...register('fromDistrict', {
-                          required: FormValidation.RequiredInput.required
-                        })
-                        }
+                        {...register('fromDistrict')}
                       >
                         {
                           district?.map((city) => (
@@ -292,10 +294,7 @@ const AddOrder = () => {
                         // defaultValue={district2 && district2[0]?.name}
                         defaultValue={''}
                         disabled={!cityId2 ? true : false}
-                        {...register('toDistrict', {
-                          required: FormValidation.RequiredInput.required
-                        })
-                        }
+                        {...register('toDistrict')}
                       >
                         {
                           district2?.map((city) => (
@@ -461,10 +460,7 @@ const AddOrder = () => {
                         label="Коментарии"
                         multiline
                         rows={4}
-                        {...register('commits', {
-                          required: FormValidation.RequiredInput.required,
-                        })
-                        }
+                        {...register('commits')}
                       />
                     </div>
                   </div>
@@ -480,6 +476,12 @@ const AddOrder = () => {
               </form>
           }
         </div>
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={open}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
     </>
   )

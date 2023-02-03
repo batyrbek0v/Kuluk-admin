@@ -14,26 +14,80 @@
   .orders-card-values {
     width: 150px;
 
+    &.new-order {
+      color: #66bb6a;
+      color: #0275d8;
+      font-weight: bold;
+    }
+
+    &.cancelled-order {
+      color: #d9534f;
+      font-weight: bold;
+    }
+
+    &.on-courier-order {
+      color: #f0ad4e;
+      font-weight: bold;
+    }
+
+    &.delivered-order {
+      color: #66bb6a;
+      font-weight: bold;
+    }
+
+    &.paid {
+      color: #66bb6a;
+      font-weight: bold;
+    }
+
+    &.not-paid {
+      color: coral;
+      font-weight: bold;
+    }
+
+    &:nth-child(2) {
+      text-align: center;
+    }
+
+    &:nth-child(3) {
+      text-align: center;
+    }
+
+    &:nth-child(4) {
+      text-align: center;
+    }
+
     &:nth-child(5) {
       width: 100px;
       text-align: center;
     }
 
-    // &:nth-child(6) {
-    //   width: 130px;
-    // }
+    &:nth-child(6) {
+      width: 130px;
+      text-align: center;
+    }
+
+    &:nth-child(7) {
+      width: 130px;
+      text-align: center;
+    }
   }
 
   .order-card-actions {
     height: 100%;
-    text-align: center;
+    text-align: right;
     flex-grow: 1;
-    .order-card-actions-btn{
+
+    .order-card-actions-btn {
       height: 100%;
       padding: 0;
     }
   }
 
+}
+
+.orders-card.deleting {
+  background-color: rgb(255, 200, 200);
 }
 
 /* .orders-card:hover {

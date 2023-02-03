@@ -4,6 +4,9 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { useNavigate } from 'react-router-dom'
 import { MdDeleteOutline } from 'react-icons/md';
 import { FiEdit, FiMoreHorizontal } from 'react-icons/fi'
+import { db } from '../../configs';
+import { deleteApp } from 'firebase/app';
+import { deleteDoc, doc } from 'firebase/firestore';
 
 const Card = ({
   id,
@@ -23,19 +26,40 @@ const Card = ({
   cost
 }) => {
 
+  const navigate = useNavigate()
   const dateTransform = new Date(+dateCreated?.seconds * 1000)
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [deleting, setDeleting] = React.useState(false)
   const [open, setOpen] = React.useState(false);
-  const navigate = useNavigate()
+
 
   const time = {
-    day: dateTransform?.getUTCDate(),
+    day: dateTransform?.getDate(),
     month: dateTransform?.getMonth(),
     year: dateTransform?.getFullYear(),
     hour: dateTransform?.getHours(),
     minutes: dateTransform?.getMinutes(),
   }
+
   const openAction = Boolean(anchorEl)
+
+  const deleteOrder = async (id) => {
+    try {
+      const orderRef = doc(db, 'orders', `${id}`)
+
+      setTimeout(async () => {
+        await deleteDoc(orderRef)
+      }, 1000)
+    } catch (error) {
+      console.error(error);
+    }
+
+    if (id) {
+      setDeleting(true)
+    }
+
+    setOpen(false);
+  }
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -45,17 +69,15 @@ const Card = ({
     setAnchorEl(event.currentTarget)
   }
   const handleClosePopUp = () => {
-    setOpen(false);
     setAnchorEl(null)
+    setOpen(false);
   };
 
-  console.log(open)
 
   return (
     <>
-      {/* <Link className='link' to={id && id}> */}
       <div
-        className={'orders-card'}
+        className={!deleting ? 'orders-card' : 'orders-card deleting'}
         onDoubleClick={() => navigate(id)}
       >
         <div className="orders-card-values">
@@ -65,15 +87,27 @@ const Card = ({
           <time>
             {time.day < 10 && '0'}{time.day}
             .{time.month < 10 && '0'}{time.month + 1}
-            .{time.year} / {time.hour}:{time.minutes < 10 && '0'}{time.minutes}
+            .{time.year} / {time.hour < 10 ? '0' : ''}
+            {time.hour}:{time.minutes < 10 && '0'}
+            {time.minutes}
           </time>
         </div>
-        <div className='orders-card-values'>
+        <div className={
+          status == 'status_new' && 'orders-card-values new-order'
+          || status == 'status_confirmed' && 'orders-card-values confirmed-order'
+          || status == 'status_arrived_sender' && 'orders-card-values arrived-sender-order'
+          || status == 'status_on_courier' && 'orders-card-values on-courier-order'
+          || status == 'status_at_sorting_center' && 'orders-card-values at-sorting-order'
+          || status == 'status_delivered' && 'orders-card-values delivered-order'
+          || status == 'status_rejected' && 'orders-card-values rejected-order'
+          || status == 'status_cancelled' && 'orders-card-values cancelled-order'
+        }
+        >
           <p>
             {
               status == 'status_new' && 'Новый'
               || status == 'status_confirmed' && 'Подтвержден'
-              || status == 'status_arrived_sender' && 'Подтвержден'
+              || status == 'status_arrived_sender' && 'Прибыл к отправ-лю'
               || status == 'status_on_courier' && 'У курьера'
               || status == 'status_at_sorting_center' && 'B сорт.центре'
               || status == 'status_delivered' && 'Доставлен'
@@ -110,9 +144,11 @@ const Card = ({
             }
           </p>
         </div>
-        <div className='orders-card-values'>
+        <div className={
+          !paymentStatus ? 'orders-card-values not-paid' : 'orders-card-values paid'
+        }>
           <p>
-            {paymentStatus == false ? 'Не оплачен' : 'Оплачен'}
+            {!paymentStatus ? 'Не оплачен' : 'Оплачен'}
           </p>
         </div>
         <div className="order-card-actions">
@@ -162,20 +198,13 @@ const Card = ({
         <DialogTitle id="alert-dialog-title">
           {"Вы уверены что хотите удалить заказ?"}
         </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending anonymous
-            location data to Google, even when no apps are running.
-          </DialogContentText>
-        </DialogContent>
         <DialogActions>
           <Button onClick={handleClosePopUp}>Отмена</Button>
-          <Button onClick={handleClosePopUp} autoFocus>
+          <Button onClick={() => deleteOrder(id)} autoFocus>
             Удалить
           </Button>
         </DialogActions>
       </Dialog>
-      {/* </Link> */}
     </>
   )
 }

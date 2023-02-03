@@ -6,19 +6,28 @@ import { db } from '../../../../configs';
 import { getDoc } from 'firebase/firestore';
 import { BiDetail } from 'react-icons/bi';
 import { AiOutlineQrcode, AiFillPhone } from 'react-icons/ai';
-import { MdLocationPin } from 'react-icons/md'
-import { Divider, Button, ButtonGroup } from '@mui/material';
+import { MdLocationPin, MdFastfood } from 'react-icons/md'
+import { Divider, Button, ButtonGroup, Box, Stepper, Step, StepLabel } from '@mui/material';
 import { Loader } from '../../../../components/Loader/Loader';
 import { AiFillDelete } from 'react-icons/ai';
 import { VscError } from 'react-icons/vsc';
-import { FiEdit } from 'react-icons/fi';
+import { FiEdit, FiPackage } from 'react-icons/fi';
 import './OrdersMore.css'
+import { Header } from '../../../../components/Header/Header';
+import { CgFileDocument } from 'react-icons/cg'
+import { GiMedicines } from 'react-icons/gi'
+import { GoPackage } from 'react-icons/go'
+import { BiPackage } from 'react-icons/bi'
 
 const OrdersMore = () => {
 
   const [order, setOrder] = React.useState(null)
   const { id } = useParams()
-
+  const steps = [
+    'Select master blaster campaign settings',
+    'Create an ad group',
+    'Create an ad',
+  ];
 
   const getOrder = async () => {
     const docRef = doc(db, 'orders', `${id}`)
@@ -30,7 +39,6 @@ const OrdersMore = () => {
     try {
       const orderRef = doc(db, 'orders', `${order?.id}`)
       await deleteDoc(orderRef)
-      await alert('Заказ удален')
     } catch (error) {
       console.error(error)
     }
@@ -45,18 +53,23 @@ const OrdersMore = () => {
   return (
     <>
       <div className="container">
+        <Header previous={'Список заказов'} initial='Детали заказа' />
         <Title title={'Детали заказа'} icon={<BiDetail />} />
         <div className="container-inner">
           {
             !order
-              ? <Loader /> :
-              <div className="orders-more-block">
+              ? <Loader />
+              : <div className="orders-more-block">
                 <div className='orders-more-heading'>
-                  <AiOutlineQrcode size={'20px'} />
-                  <p>ID: {id}</p>
-                  <div className='order-more-status'>
-
-                  </div>
+                  <Box sx={{ width: '100%' }}>
+                    <Stepper activeStep={1} alternativeLabel>
+                      {steps.map((label) => (
+                        <Step key={label}>
+                          <StepLabel>{label}</StepLabel>
+                        </Step>
+                      ))}
+                    </Stepper>
+                  </Box>
                 </div>
                 <Divider />
                 <div className='order-more-box'>
@@ -121,6 +134,15 @@ const OrdersMore = () => {
                             || order?.packageType == 'small_box' && 'Маленькая коробка'
                             || order?.packageType == 'box' && 'Коробка'
                             || order?.packageType == 'food' && 'Еда'
+                            || order?.packageType == 'other' && 'Другое'
+                          }
+                          {
+                            order?.packageType == 'document' && <CgFileDocument />
+                            || order?.packageType == 'medicine' && <GiMedicines />
+                            || order?.packageType == 'large_box' && <GoPackage />
+                            || order?.packageType == 'small_box' && <BiPackage />
+                            || order?.packageType == 'box' && <FiPackage />
+                            || order?.packageType == 'food' && <MdFastfood />
                             || order?.packageType == 'other' && 'Другое'
                           }
                         </h3>
