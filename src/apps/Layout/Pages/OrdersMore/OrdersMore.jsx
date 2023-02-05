@@ -24,9 +24,11 @@ const OrdersMore = () => {
   const [order, setOrder] = React.useState(null)
   const { id } = useParams()
   const steps = [
-    'Select master blaster campaign settings',
-    'Create an ad group',
-    'Create an ad',
+    'Подтвержден',
+    'Новый',
+    'У курьера',
+    'B сорт.центре',
+    'Доставлен',
   ];
 
   const getOrder = async () => {
@@ -62,13 +64,29 @@ const OrdersMore = () => {
               : <div className="orders-more-block">
                 <div className='orders-more-heading'>
                   <Box sx={{ width: '100%' }}>
-                    <Stepper activeStep={1} alternativeLabel>
-                      {steps.map((label) => (
-                        <Step key={label}>
-                          <StepLabel>{label}</StepLabel>
-                        </Step>
-                      ))}
-                    </Stepper>
+                    {
+                      order?.status == 'status_cancelled'
+                        ? <Stepper activeStep={0} alternativeLabel>
+                          <Step>
+                            <StepLabel color='error'>Заказ отменен</StepLabel>
+                          </Step>
+                        </Stepper>
+                        : <Stepper activeStep={
+                          order?.status == 'status_confirmed' ? 0 : ''
+                            || order?.status == 'status_new' && 1
+                            || order?.status == 'status_on_courier' && 2
+                            || order?.status == 'status_at_sorting_center' && 3
+                            || order?.status == 'status_delivered' && 4
+                        }
+                          alternativeLabel
+                        >
+                          {steps.map((label) => (
+                            <Step key={label}>
+                              <StepLabel >{label}</StepLabel>
+                            </Step>
+                          ))}
+                        </Stepper>
+                    }
                   </Box>
                 </div>
                 <Divider />
@@ -143,7 +161,6 @@ const OrdersMore = () => {
                             || order?.packageType == 'small_box' && <BiPackage />
                             || order?.packageType == 'box' && <FiPackage />
                             || order?.packageType == 'food' && <MdFastfood />
-                            || order?.packageType == 'other' && 'Другое'
                           }
                         </h3>
                       </div>

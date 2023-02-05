@@ -9,34 +9,24 @@ import { db } from '../../../../configs';
 
 const Admin = () => {
 
-  const [base, setBase] = React.useState(null)
+  // const [base, setBase] = React.useState(null)
 
-  React.useEffect(() => {
-    const getBase = async () => {
-      const docRef = collection(db, "couriers")
-      const data = await getDocs(docRef)
-      setBase(data?.docs?.map((doc, index) => ({ ...doc?.data(), id: index, index: index })))
-    }
+  // React.useEffect(() => {
+  //   const getBase = async () => {
+  //     const docRef = collection(db, "couriers")
+  //     const data = await getDocs(docRef)
+  //     setBase(data?.docs?.map((doc, index) => ({ ...doc?.data(), id: index, index: index })))
+  //   }
 
-    getBase()
-  }, [])
+  //   getBase()
+  // }, [])
 
   return (
     <>
-      <div className='admin-container'>
-        <div>
-          <Title title={'Админ панель'} icon={<FcAssistant />} />
-          <p>Удаление/редактирование курьеров</p>
-        </div>
-        <div className='admin-card-wrapper'>
-          <div className='admin-card-wrapper-head'>
-            <div>
-              
-            </div>
-          </div>
-          {
-            base?.map(item => <Card {...item} key={item.id}/>)
-          }
+      <div className='container'>
+        <Title title={'Админ панель'} icon={<FcAssistant />} />
+        <div className="container-inner">
+          
         </div>
       </div>
     </>

@@ -121,9 +121,9 @@ const Card = ({
             {
               packageType == 'document' && 'Документ'
               || packageType == 'medicine' && 'Лекарство'
-              || packageType == 'large_box' && 'Большая коробка'
-              || packageType == 'small_box' && 'Мал-ая коробка'
-              || packageType == 'box' && 'Коробка'
+              || packageType == 'large_box' && 'L коробка'
+              || packageType == 'small_box' && 'S коробка'
+              || packageType == 'box' && 'M коробка'
               || packageType == 'food' && 'Еда'
               || packageType == 'other' && 'Другое'
             }

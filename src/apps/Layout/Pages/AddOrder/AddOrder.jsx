@@ -140,7 +140,7 @@ const AddOrder = () => {
             !city
               ? <Loader />
               : <form className='order-form'>
-                <div className='order-form-flex'>
+                <div className='order-form-flex' >
                   {/* ОТПРАВИТЕЛЬ */}
                   <div className='order-block'>
                     <div className='order-block-head'>

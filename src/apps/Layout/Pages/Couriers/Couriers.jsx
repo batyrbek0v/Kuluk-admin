@@ -9,9 +9,9 @@ const Couriers = () => {
 
   return (
     <>
-      <div className='courier-container'>
+      <div className='container'>
         <Title title={'Таблица курьеров'} icon={<BsTable />} />
-        <div className='courier-inner'>
+        <div className='container-inner'>
           <TTable />
         </div>
       </div>

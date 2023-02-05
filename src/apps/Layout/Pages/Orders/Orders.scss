@@ -83,6 +83,9 @@
         &:nth-child(5) {
           width: 100px;
         }
+        &:last-child{
+          text-align: center;
+        }
       }
     }
   }

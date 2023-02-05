@@ -6,17 +6,16 @@ import { MdDeliveryDining } from 'react-icons/md'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { BsTable } from 'react-icons/bs'
 import { handleSignOut } from '../../configs'
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-
 export const sideList = [
   { id: 1, icon: <AssessmentIcon />, title: 'Статистика', path: '/' },
-  { id: 2, icon: <LibraryAddIcon fontSize="small" />, title: 'Добавить заказ', path: '/addorder' },
-  { id: 3, icon: <FaClipboardList size={"18px"} />, title: 'Список заказов', path: '/orders' },
-  { id: 4, icon: <PersonAddAlt1Icon />, title: 'Добавить курьера', path: '/addcourier' },
-  { id: 5, icon: <BsTable />, title: 'Список курьеров', path: '/couriers' },
+  { id: 2, icon: <AiOutlinePlusCircle size={18} />, title: 'Создать заказ', path: '/addorder' },
+  { id: 3, icon: <FaClipboardList size={18} />, title: 'Список заказов', path: '/orders' },
+  { id: 4, icon: <AiOutlinePlusCircle size={18} />, title: 'Создать курьера', path: '/addcourier' },
+  { id: 5, icon: <FaClipboardList size={18} />, title: 'Список курьеров', path: '/couriers' },
   { id: 6, icon: <AdminPanelSettingsIcon />, title: 'Админ панель', path: '/admin' },
 ]
 

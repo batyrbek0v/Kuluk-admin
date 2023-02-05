@@ -6,7 +6,7 @@ import { Loader } from '../../../../components/Loader/Loader';
 import { GrUpdate } from 'react-icons/gr';
 import { FaClipboardList } from 'react-icons/fa'
 import { columnCount, sortByCostList } from '../../../../components/Utils';
-import { Refresh, Search } from '@mui/icons-material';
+import { CleaningServices, Refresh, Search } from '@mui/icons-material';
 import { orderRef } from './../../../../components/Utils/fireStoreRef';
 import { typeOfOrder, orderLabels } from './../../../../components/Utils/index';
 import { Header } from '../../../../components/Header/Header';
@@ -14,6 +14,7 @@ import { styled } from '@mui/system';
 import { GridSearchIcon } from '@mui/x-data-grid';
 import './Orders.scss'
 import { useNavigate } from 'react-router-dom';
+import noData from '../../../../assets/images/no-data.svg'
 import {
   Pagination, 
   PaginationItem, 
@@ -28,15 +29,13 @@ import Skeleton from '../../../../components/Skeleton';
 const Orders = () => {
 
   const [order, setOrder] = React.useState(null)
-  const [sortOrder, setSortOrder] = React.useState(null)
   const [date, setDate] = React.useState(0)
   const [page, setPage] = React.useState(1)
   const [cost, setCost] = React.useState(0)
   const [type, setType] = React.useState('')
   const [input, setInput] = React.useState('')
   const [column, setColumn] = React.useState(10)
-
-  const [test, setTest] = React.useState(null)
+  const [sortOrder, setSortOrder] = React.useState('ASC')
 
   const navigate = useNavigate()
 
@@ -51,48 +50,60 @@ const Orders = () => {
         })
       ))
     })
+    // typeSort()
     return () => unSub()
   },[page])
 
 // ---------------------------------
   // SORT-ORDERS-BY-COST
-  const costSort = async () => {
-    const sortQuery = query(orderRef, where('cost', '==', cost)) 
-    const base = await getDocs(sortQuery)
-    .then(res => setOrder(
-      res?.docs?.map(
-        doc => ({
-          ...doc?.data(),
-          id: doc?.id
-        })
-      )))
-    .catch(err => console.error(err))
-  }
+  // const costSort = (e) => {
+  //   setSortOrder(e?.target?.value)
+  //   console.log(sortOrder)
+  //   // console.log(e.target.value)
+
+
+  // };
+  // const sortedData = order && [...order]?.sort((a, b) => {
+  //   if (sortOrder === 'ASC') {
+  //     return b.cost - a.cost;
+  //   } else {
+  //     return a.cost - b.cost;
+  //   }
+  // });
+  // React.useEffect(() => {
+  //   costSort()
+  // },[test])
+  
   // SORT-ORDERS-BY-TYPE
-  const typeSort = async (value) => {
-    const sortQuery = query(orderRef, where('packageType', '==', type)) 
-    const base = await getDocs(sortQuery)
-    .then(res => setOrder(
-        res?.docs?.map(
-          doc => ({
-            ...doc?.data(),
-            id: doc?.id
-          })
-        )))
-    .catch(err => console.error(err))
-  }
-  const timeSort = async (value) => {
-    const sortQuery = query(orderRef, where('dateCreated', '==', '2023')) 
-    const base = await getDocs(sortQuery)
-    .then(res => setTest(
-        res?.docs?.map(
-          doc => ({
-            ...doc?.data(),
-            id: doc?.id
-          })
-        )))
-    .catch(err => console.error(err))
-  }
+
+  // React.useEffect(() => {
+  //   const typeSort = async (value) => {
+  //     const sortQuery = query(orderRef, where('packageType', '==', type))
+  //     const base = await getDocs(sortQuery)
+  //     .then(res => setOrder(
+  //         res?.docs?.map(
+  //           doc => ({
+  //             ...doc?.data(),
+  //             id: doc?.id
+  //           })
+  //         )))
+  //         .catch(err => console.error(err.message))
+  //   }
+  //  typeSort()
+  // },[type])
+
+  // const timeSort = async (value) => {
+  //   const sortQuery = query(orderRef, where('dateCreated', '==', '2023')) 
+  //   const base = await getDocs(sortQuery)
+  //   .then(res => setTest(
+  //       res?.docs?.map(
+  //         doc => ({
+  //           ...doc?.data(),
+  //           id: doc?.id
+  //         })
+  //       )))
+  //   .catch(err => console.error(err))
+  // }
 
   // PAGINATION
   const TOTAL_PAGE = order?.length / column
@@ -101,15 +112,14 @@ const Orders = () => {
   //-------------------------------
   
   // React.useEffect(() => {
-  //   timeSort()
-  // }, [])
+  //   costSort()
+  // }, [sortOrder])
 
   // React.useEffect(() => {
   //   typeSort()
   // }, [page, type])
   
   // if(CEIL_PAGE === NaN) return <Loader/>
-
 
   return (
     <>
@@ -137,13 +147,15 @@ const Orders = () => {
                 fullWidth
                 defaultValue=""
                 size='small'
-                onChange={e => setCost(e.target.value)}
+                onChange={e => setSortOrder(e.target.value)}
               >
-                {sortByCostList.map((option) => (
-                  <MenuItem key={option.id} value={option.name}>
-                    {option.title}
-                  </MenuItem>
-                ))}
+           
+                <MenuItem value="ASC">
+                  По возростанию
+                </MenuItem>
+                <MenuItem value="DESC">
+                  По Убыванию
+                </MenuItem>
               </TextField>
             </div>
             <div className="order-sort">
@@ -173,6 +185,7 @@ const Orders = () => {
                 size='small'
                 onChange={e => setType(e.target.value)}
               >
+              
                 {typeOfOrder.map((option) => (
                   <MenuItem key={option.id} value={option.value}>
                     {option.name}
@@ -209,11 +222,14 @@ const Orders = () => {
                   sx={{'width': '200px'}}
                   onChange={e => setColumn(e.target.value)}
                 >
-                  {columnCount.map((option) => (
+              
+                  {
+                  columnCount.map((option) => (
                     <MenuItem key={option.id} value={option.name}>
                       {option.name}
                     </MenuItem>
-                  ))}
+                  ))
+                  }
               </TextField>
                   <Pagination
                     count={CEIL_PAGE}
@@ -241,6 +257,15 @@ const Orders = () => {
                 ?.sort((a, b) => a['dateCreated']?.seconds > b['dateCreated']?.seconds && -1)
                 .slice((page - 1) * column, (page - 1) * column + column)
                   .map(item => <Card {...item} key={item?.id} />)
+            }
+            {
+              !order?.length && 
+              <figure>
+                <svg width="100%" height="300px" style={{"margin": "20px 0"}}>
+                  <image href={noData} width="100%" height="100%"/>
+                </svg>
+                <figcaption style={{"textAlign": "center"}}><h1>Результатов не найдено</h1></figcaption>
+              </figure>
             }
           </div>
         </div>
