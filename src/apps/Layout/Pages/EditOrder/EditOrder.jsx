@@ -1,28 +1,37 @@
 import React from 'react'
-import { Title } from './../../../../components/Title/Title';
-import { FiEdit } from 'react-icons/fi';
+import { FormValidation } from '../../../../components/Form/FormValidation/exports';
+import { citiesRef, villageRef } from '../../../../components/Utils/fireStoreRef';
 import { Loader } from './../../../../components/Loader/Loader';
-import { TextField, Box, MenuItem, Backdrop, CircularProgress } from '@mui/material';
+import { payment } from './../../../../components/Utils/index';
+import { Header } from '../../../../components/Header/Header';
+import { Title } from './../../../../components/Title/Title';
+import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { db } from '../../../../configs';
+import { FiEdit } from 'react-icons/fi';
 import { Button } from '@mui/material';
 import {
-  addDoc,
+  TextField,
+  Box,
+  MenuItem,
+  Backdrop,
+  CircularProgress
+} from '@mui/material';
+import {
+  orderTariff,
+  paymentPerson,
+  paymentStatus,
+  typeOfOrder
+} from '../../../../components/Utils';
+import {
   collection,
   doc,
   getDoc,
   getDocs,
   query,
-  QuerySnapshot,
-  setDoc,
   updateDoc,
   where
 } from 'firebase/firestore';
-import { db } from '../../../../configs';
-import { FormValidation } from '../../../../components/Form/FormValidation/exports';
-import { orderTariff, paymentPerson, paymentStatus, typeOfOrder } from '../../../../components/Utils';
-import { payment } from './../../../../components/Utils/index';
-import { useParams } from 'react-router-dom';
-import { Header } from '../../../../components/Header/Header';
 
 const EditOrder = () => {
 
@@ -36,8 +45,8 @@ const EditOrder = () => {
     formState: { errors }
   } = useForm()
 
-  const citiesRef = collection(db, "city")
-  const villageRef = collection(db, "village")
+  // const citiesRef = collection(db, "city")
+  // const villageRef = collection(db, "village")
 
   const [order, setOrder] = React.useState(null)
   const [city, setCity] = React.useState(null)
@@ -123,7 +132,7 @@ const EditOrder = () => {
 
     const getCity = async () => {
       const data = await getDocs(citiesRef)
-      setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
+      setCity(data?.docs?.map((doc) => ({ ...doc?.data() })))
     }
 
     const getDist = async () => {

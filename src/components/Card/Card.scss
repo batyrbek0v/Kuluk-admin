@@ -22,8 +22,30 @@
       font-weight: bold;
       color: #0275d8;
       color: #0e7090;
+      color: #850e90;
       background-color: lightblue;
 
+    }
+
+    &.confirmed-order {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #0275d8;
+      color: #850e90;
+      background-color: #eadaff;
+
+    }
+
+    &.arrived-sender-order {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #0275d8;
+      color: #725c12;
+      background-color: #f4ffda;
     }
 
     &.cancelled-order {

@@ -1,28 +1,39 @@
 import React from 'react'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { Title } from '../../../../components/Title/Title'
-import { collection, deleteDoc, doc } from 'firebase/firestore';
-import { db } from '../../../../configs';
-import { getDoc } from 'firebase/firestore';
-import { BiDetail } from 'react-icons/bi';
-import { AiOutlineQrcode, AiFillPhone } from 'react-icons/ai';
-import { MdLocationPin, MdFastfood } from 'react-icons/md'
-import { Divider, Button, ButtonGroup, Box, Stepper, Step, StepLabel } from '@mui/material';
-import { Loader } from '../../../../components/Loader/Loader';
-import { AiFillDelete } from 'react-icons/ai';
-import { VscError } from 'react-icons/vsc';
-import { FiEdit, FiPackage } from 'react-icons/fi';
-import './OrdersMore.css'
-import { Header } from '../../../../components/Header/Header';
+import { useNavigate, useParams } from 'react-router-dom'
+import { deleteDoc, doc, getDoc } from 'firebase/firestore';
+import { AiFillCloseCircle, AiFillCheckCircle } from 'react-icons/ai';
+import { BiDetail, BiPackage } from 'react-icons/bi';
 import { CgFileDocument } from 'react-icons/cg'
-import { GiMedicines } from 'react-icons/gi'
 import { GoPackage } from 'react-icons/go'
-import { BiPackage } from 'react-icons/bi'
+import { GiMedicines } from 'react-icons/gi'
+import { FiPackage } from 'react-icons/fi';
+import { MdFastfood } from 'react-icons/md'
+import { db } from '../../../../configs';
+import { Title } from '../../../../components/Title/Title'
+import { Loader } from '../../../../components/Loader/Loader';
+import { Header } from '../../../../components/Header/Header';
+import './OrdersMore.scss'
+import {
+  Divider,
+  Button,
+  Box,
+  Stepper,
+  Step,
+  StepLabel,
+  Dialog,
+  DialogTitle,
+  DialogActions
+} from '@mui/material';
 
 const OrdersMore = () => {
 
   const [order, setOrder] = React.useState(null)
+  const [open, setOpen] = React.useState(false);
+  const [deleting, setDeleting] = React.useState(false)
+
   const { id } = useParams()
+  const navigate = useNavigate()
+
   const steps = [
     'Подтвержден',
     'Новый',
@@ -31,26 +42,67 @@ const OrdersMore = () => {
     'Доставлен',
   ];
 
+  const dateTransform = new Date(+order?.dateCreated?.seconds * 1000)
+
+  const time = {
+    day: dateTransform?.getDate(),
+    month: dateTransform?.getMonth(),
+    year: dateTransform?.getFullYear(),
+    hour: dateTransform?.getHours(),
+    minutes: dateTransform?.getMinutes(),
+  }
+
   const getOrder = async () => {
     const docRef = doc(db, 'orders', `${id}`)
     const docSnap = await getDoc(docRef)
     setOrder({ ...docSnap.data(), id: docSnap.id })
   }
 
-  const deleteOrder = async (order) => {
+  const deleteOrder = async (id) => {
+    setOpen(!open);
+
     try {
-      const orderRef = doc(db, 'orders', `${order?.id}`)
-      await deleteDoc(orderRef)
+      const orderRef = doc(db, 'orders', `${id}`)
+      setTimeout(async () => {
+        await deleteDoc(orderRef)
+        alert('Заказ удален, нажмите на "ok" чтобы перейти к заказамн')
+
+        if (alert) {
+          navigate('/orders')
+        }
+
+      }, 1000)
+
+      // if (message) {
+      // navigate('/orders')
+      // console.log('true')
+      // }
+      // if (message == true) {
+      //   navigate('/orders')
+      // }
+
     } catch (error) {
-      console.error(error)
+      alert(error.message)
     }
+
+    if (id) {
+      setDeleting(true)
+    }
+
   }
 
-  const navigate = useNavigate()
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClickClose = () => {
+    setOpen(false);
+  };
+
 
   React.useEffect(() => {
     getOrder()
   }, [])
+
 
   return (
     <>
@@ -61,176 +113,204 @@ const OrdersMore = () => {
           {
             !order
               ? <Loader />
-              : <div className="orders-more-block">
-                <div className='orders-more-heading'>
+              :
+              <div className="orders-more-wrapper">
+                <div className={!deleting ? "orders-more-box" : "orders-more-box deleting"}>
+                  <div className="orders-more-box-header">
+                    <h3>Статус заказа</h3>
+                  </div>
+                  <Divider />
                   <Box sx={{ width: '100%' }}>
                     {
                       order?.status == 'status_cancelled'
                         ? <Stepper activeStep={0} alternativeLabel>
                           <Step>
                             <StepLabel color='error'>Заказ отменен</StepLabel>
-                          </Step>
+                          </Step>title
                         </Stepper>
                         : <Stepper activeStep={
                           order?.status == 'status_confirmed' ? 0 : ''
                             || order?.status == 'status_new' && 1
                             || order?.status == 'status_on_courier' && 2
                             || order?.status == 'status_at_sorting_center' && 3
-                            || order?.status == 'status_delivered' && 4
+                            || order?.status == 'status_delivered' && 5
                         }
                           alternativeLabel
                         >
                           {steps.map((label) => (
                             <Step key={label}>
-                              <StepLabel >{label}</StepLabel>
+                              <StepLabel>{label}</StepLabel>
                             </Step>
                           ))}
                         </Stepper>
                     }
                   </Box>
                 </div>
-                <Divider />
-                <div className='order-more-box'>
-                  <div className='order-more-box-heading'>
-                    <h4>Отправитель</h4>
+                <div className={!deleting ? "orders-more-box address" : "orders-more-box deleting"}>
+                  <div className="orders-more-box-header">
+                    <h3>Отправитель</h3>
                   </div>
-                  <div className="order-more-box-body">
-                    <div className="order-more-adress">
-                      <div>
-                        <AiFillPhone size={'20px'} color={'#23A42F'} />
-                        <p>{order?.sender}</p>
-                        <strong>({order?.senderName})</strong>
-                      </div>
-                      <div>
-                        <MdLocationPin size={'24px'} color={'#23A42F'} />
-                        <address>
-                          {order?.addressFrom?.cityName}, {order?.addressFrom?.districtName} / {order?.addressFrom?.address}
-                        </address>
-                      </div>
-                    </div>
-                  </div>
+                  <Divider />
+                  {/* <div className="orders-more-box-body"> */}
+                  <ul className="orders-more-body-list">
+                    <li><span>Имя</span><span>{order?.senderName}</span></li>
+                    <Divider />
+                    <li><span>Номер телефона</span><span>{order?.sender}</span></li>
+                    <Divider />
+                    <li><span>Город</span><span>{order?.addressFrom.cityName}</span></li>
+                    <Divider />
+                    <li>
+                      <span>Регион/село</span>
+                      <span>
+                        {
+                          order?.addressFrom.districtName
+                            ? order?.addressFrom.districtName
+                            : '----------'
+                        }
+                      </span>
+                    </li>
+                    <Divider />
+                    <li><span>Адрес отправки</span><span>{order?.addressFrom.address}</span></li>
+                  </ul>
+                  {/* </div> */}
                 </div>
-                <Divider />
-                <div className='order-more-box'>
-                  <div className='order-more-box-heading'>
-                    <h4>Получатель</h4>
+                <div className={!deleting ? "orders-more-box address" : "orders-more-box deleting"}>
+                  <div className="orders-more-box-header">
+                    <h3>Получатель</h3>
                   </div>
-                  <div className="order-more-box-body">
-                    <div className="order-more-adress">
-                      <div>
-                        <AiFillPhone size={'20px'} color={'#23A42F'} />
-                        <p>{order?.receiver}</p>
-                        <strong>({order?.receiverName})</strong>
-                      </div>
-                      <div>
-                        <MdLocationPin size={'24px'} color={'#23A42F'} />
-                        <address>
-                          {order?.addressTo?.cityName}, {order?.addressTo?.districtName} / {order?.addressTo?.address}
-                        </address>
-                      </div>
-                    </div>
-                  </div>
+                  <Divider />
+                  {/* <div className="orders-more-box-body"> */}
+                  <ul className="orders-more-body-list">
+                    <li><span>Имя</span><span>{order?.receiverName}</span></li>
+                    <Divider />
+                    <li><span>Номер телефона</span><span>{order?.receiver}</span></li>
+                    <Divider />
+                    <li><span>Город</span><span>{order?.addressTo.cityName}</span></li>
+                    <Divider />
+                    <li>
+                      <span>Регион/село</span>
+                      <span>
+                        {
+                          order?.addressTo.districtName
+                            ? order?.addressFrom.districtName
+                            : '----------'
+                        }
+                      </span>
+                    </li>
+                    <Divider />
+                    <li><span>Адрес отправки</span><span>{order?.addressTo.address}</span></li>
+                  </ul>
+                  {/* </div> */}
                 </div>
-                <Divider />
-                <div className='order-more-box'>
-                  <div className='order-more-box-heading'>
-                    <h4>Детали заказа</h4>
+                <div className={!deleting ? "orders-more-box" : "orders-more-box deleting"}>
+                  <div className="orders-more-box-header">
+                    <h3>Детали заказа</h3>
                   </div>
-                  <div className='order-more-box-detail'>
-                    <div className='order-detail-wrapper'>
-                      <div className='order-tariff-type'>
-                        <p>Тариф</p>
-                        <h3>{order?.tariff?.name}</h3>
-                      </div>
-                      <div className='order-tariff-type'>
-                        <p>Тип посылки</p>
-                        <h3>
-                          {
-                            order?.packageType == 'document' && 'Документ'
-                            || order?.packageType == 'medicine' && 'Лекарство'
-                            || order?.packageType == 'large_box' && 'Большая коробка'
-                            || order?.packageType == 'small_box' && 'Маленькая коробка'
-                            || order?.packageType == 'box' && 'Коробка'
-                            || order?.packageType == 'food' && 'Еда'
-                            || order?.packageType == 'other' && 'Другое'
-                          }
-                          {
-                            order?.packageType == 'document' && <CgFileDocument />
-                            || order?.packageType == 'medicine' && <GiMedicines />
-                            || order?.packageType == 'large_box' && <GoPackage />
-                            || order?.packageType == 'small_box' && <BiPackage />
-                            || order?.packageType == 'box' && <FiPackage />
-                            || order?.packageType == 'food' && <MdFastfood />
-                          }
-                        </h3>
-                      </div>
-                    </div>
-                    <ul className='order-detail-list'>
-                      <li>
-                        <span>Оплачивает:</span>
-                        <span>{order?.whoPays == '1' ? 'Отправитель' : 'Получатель'}</span>
-                      </li>
-                      <li>
-                        <span>Способ оплаты:</span>
-                        <span>
-                          {
-                            order?.paymentMethod == 'cash' && 'Наличнымим'
-                            || order?.paymentMethod == 'mbank' && 'МБАНК'
-                            || order?.paymentMethod == 'optima' && 'Оптима'
-                            || order?.paymentMethod == 'odengi' && 'О! Деньги'
-                            || order?.paymentMethod == 'elsom' && 'Элсом'
-                            || order?.paymentMethod == 'other' && 'Другое'
-                          }
-                        </span>
-                      </li>
-                      <li>
-                        <span>Стоимость доставки:</span>
-                        <span>{order?.cost}⃀</span>
-                      </li>
-                      <li>
-                        <span>Выкуп:</span>
-                        <span>{order?.redemption}⃀</span>
-                      </li>
-                      <li>
-                        <span>Статус оплаты:</span>
-                        <span>{order?.paymentStatus == false ? 'Не оплачен' : 'Оплачен'}</span>
-                      </li>
-                    </ul>
-                  </div>
+                  <Divider />
+                  <ul className="orders-more-body-list">
+                    <li><span>ID</span><span>{order?.id}</span></li>
+                    <Divider />
+                    <li>
+                      <span>Дата</span>
+                      <span>
+                        {time.day < 10 && '0'}{time.day}
+                        /{time.month < 10 && '0'}{time.month + 1}
+                        /{time.year} {time.hour < 10 ? '0' : ''}
+                        {time.hour}:{time.minutes < 10 && '0'}
+                        {time.minutes}
+                      </span>
+                    </li>
+                    <Divider />
+                    <li>
+                      <span>Тип посылки</span>
+                      <span className='order-more-list-type'>
+                        {
+                          order?.packageType == 'document' && 'Документ'
+                          || order?.packageType == 'medicine' && 'Лекарство'
+                          || order?.packageType == 'large_box' && 'Большая коробка'
+                          || order?.packageType == 'small_box' && 'Маленькая коробка'
+                          || order?.packageType == 'box' && 'Коробка'
+                          || order?.packageType == 'food' && 'Еда'
+                          || order?.packageType == 'other' && 'Другое'
+                        }
+                        {
+                          order?.packageType == 'document' && <CgFileDocument size={18} color="#3A46D6" />
+                          || order?.packageType == 'medicine' && <GiMedicines size={18} color="#b42318" />
+                          || order?.packageType == 'large_box' && <GoPackage size={18} color="#f0ad4e" />
+                          || order?.packageType == 'small_box' && <BiPackage size={18} color="#f0ad4e" />
+                          || order?.packageType == 'food' && <MdFastfood size={18} color="#0b815a" />
+                          || order?.packageType == 'box' && <FiPackage size={18} color="#f0ad4e" />
+                        }
+                      </span>
+                    </li>
+                    <Divider />
+                    <li>
+                      <span>Платежное лицо</span>
+                      <span>
+                        {
+                          order?.whoPays == '1' ? 'Отправитель' : 'Получатель'
+                        }
+                      </span>
+                    </li>
+                    <Divider />
+                    <li>
+                      <span>Метод оплаты</span>
+                      <span>
+                        {
+                          order?.paymentMethod == 'cash' && 'Наличными'
+                          || order?.paymentMethod == 'mbank' && 'МБАНК'
+                          || order?.paymentMethod == 'optima' && 'Оптима'
+                          || order?.paymentMethod == 'odengi' && 'О!Деньги'
+                          || order?.paymentMethod == 'elsom' && 'Элсом'
+                          || order?.paymentMethod == 'schet_faktura' && 'Счет фактура'
+                          || order?.paymentMethod == 'other' && 'Другое'
+                        }
+                      </span>
+                    </li>
+                    <Divider />
+                    <li>
+                      <span>Статус оплаты</span>
+                      <span className="order-more-list-type">
+                        {!order?.paymentStatus ? 'Не оплачен' : 'Оплачен'}
+                        {
+                          !order?.paymentStatus
+                            ? <AiFillCloseCircle size={18} color="#b42318" />
+                            : <AiFillCheckCircle size={18} color="#0b815a" />
+                        }
+                      </span>
+                    </li>
+                    <Divider />
+                    <li><span>Выкуп</span><span>{order?.redemption}⃀</span></li>
+                    <Divider />
+                    <li><span>Сумма</span><span>{order?.cost}⃀</span></li>
+                    <Divider />
+                    <li className='order-more-list-comments'>
+                      <span>Коментарии</span>
+                      <span>{order?.comments ? order?.comments : '----------'}</span>
+                    </li>
+                  </ul>
                 </div>
-                <Divider />
-                <div className="order-more-btns">
-                  <ButtonGroup sx={{ "gap": "4px" }}>
-                    <Button
-                      variant='contained'
-                      color='success'
-                      sx={{ "gap": "4px" }}
-                      onClick={() => navigate(`/orders/edit/${id}`)}
-                    >
-                      Редактировать
-                      <FiEdit />
-                    </Button>
-                    <Button
-                      variant='contained'
-                      color='error'
-                      sx={{ "gap": "4px" }}
-                      onClick={e => deleteOrder(order)}
-                    >
-                      Удалить заказ
-                      <AiFillDelete />
-                    </Button>
-                    <Button
-                      variant='contained'
-                      color='error'
-                      sx={{ "gap": "4px" }}
-                    >
-                      Отменить заказ
-                      <VscError />
-                    </Button>
-                  </ButtonGroup>
+                <div className={!deleting ? "orders-more-box actions" : "orders-more-box deleting"}>
+                  <Button variant='contained' onClick={handleClickOpen}>Удалить</Button>
+                  <Button variant='contained' onClick={() => navigate(`/orders/edit/${id}`)}>Редактировать</Button>
                 </div>
               </div>
           }
+          <Dialog
+            open={open}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Вы уверены что хотите удалить заказ?"}
+            </DialogTitle>
+            <DialogActions>
+              <Button onClick={handleClickClose}>Отмена</Button>
+              <Button onClick={() => deleteOrder(id)} autoFocus>
+                Удалить
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
       </div>
     </>

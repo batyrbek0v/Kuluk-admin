@@ -1,0 +1,180 @@
+.orders-more-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+
+  .orders-more-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #111927;
+    padding: 1rem;
+    box-shadow: rgb(0 0 0 / 8%) 0px 1px 2px;
+    border: 1px solid #00000014;
+    border-radius: 12px;
+    background-color: white;
+
+    &.deleting {
+      background-color: rgb(255, 200, 200);
+    }
+
+    &.address {
+      width: 49.6%;
+    }
+
+    &.actions {
+      flex-direction: row;
+
+      button {
+        width: 100%;
+        background-color: #3A46D6;
+      }
+    }
+
+    .orders-more-box-header {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0.35rem 0;
+
+      h3 {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111927;
+      }
+
+    
+    }
+
+    .orders-more-body-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      li {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        &.order-more-list-comments {
+          min-height: 10px;
+        }
+
+        span {
+          width: 100%;
+          color: #111927;
+          font-size: 0.875rem;
+          font-weight: 500;
+
+          &:nth-child(2) {
+            color: #6c737f;
+          }
+        }
+
+        .order-more-list-type {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .order-more-not-paid {
+          color: #b42318;
+          font-weight: bold;
+        }
+
+        .order-more-paid {
+          color: #0b815a;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+// .orders-more-block .orders-more-block .order-more-box .order-more-box-heading {
+//   text-transform: uppercase;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-heading h4 {
+//   color: #171717;
+//   font-weight: 400;
+
+// }
+
+// .orders-more-block .order-more-box .order-more-box-body {
+//   display: flex;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-body .order-more-adress {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 8px;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-body .order-more-adress div {
+//   display: flex;
+//   gap: 4px;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-detail {
+//   display: flex;
+//   flex-direction: column;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-detail .order-detail-wrapper {
+//   display: flex;
+//   gap: 4px;
+//   margin-top: 10px;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-detail .order-detail-wrapper .order-tariff-type {
+//   width: 50%;
+//   background-color: #90ee9056;
+//   padding: 8px 12px;
+//   border-radius: 6px;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-detail .order-detail-wrapper .order-tariff-type:last-child {
+//   background-color: rgba(238, 147, 144, 0.337);
+
+// }
+
+
+// .orders-more-block .order-more-box .order-more-box-detail .order-detail-wrapper .order-tariff-type p {
+//   color: #444;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-detail .order-detail-wrapper .order-tariff-type h3 {
+//   font-weight: 500;
+//   color: #23A42F;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-detail .order-detail-wrapper .order-tariff-type:last-child h3 {
+//   color: #a42323;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-detail .order-detail-list {
+//   width: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   gap: 20px;
+//   margin-top: 20px;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-detail .order-detail-list li {
+//   display: flex;
+//   justify-content: space-between;
+// }
+
+// .orders-more-block .order-more-box .order-more-box-detail .order-detail-list li span:first-child {
+//   flex-grow: 1;
+//   border-bottom: 1px dashed #171717;
+// }
+
+// .orders-more-block .order-more-btns {
+//   width: 100%;
+//   display: flex;
+// }

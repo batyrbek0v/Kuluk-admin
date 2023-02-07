@@ -52,6 +52,24 @@
       .orders-card-header-btn {
         background-color: #3A46D6;
       }
+
+      .orders-card-header-tabs {
+        div {
+
+          .orders-card-header-tab {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            text-transform: none;
+            // color: #2970ff;
+          }
+        }
+
+        .MuiTabs-root {
+          .MuiTabs-indicator {
+            background-color: #3A46D6;
+          }
+        }
+      }
     }
 
     .orders-card-wrapper-labels {
@@ -83,7 +101,8 @@
         &:nth-child(5) {
           width: 100px;
         }
-        &:last-child{
+
+        &:last-child {
           text-align: center;
         }
       }

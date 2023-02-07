@@ -40,7 +40,7 @@ export default function Navbar() {
     <>
       <nav className='nav'>
         {/* <ul className='nav-list'> */}
-        {/* <div className='nav-list-wrapper'>
+        <div className='nav-list-wrapper'>
           <div className="nav-list">
             {
               sideList.slice(0, 1).map(({ id, icon, path, title }) => (
@@ -136,8 +136,8 @@ export default function Navbar() {
             }
 
           </List>
-        </div> */}
-        <ul className='nav-list'>
+        </div>
+        {/* <ul className='nav-list'>
           {
             sideList.map(({ id, icon, path, title }) => (
               <NavLink
@@ -150,7 +150,7 @@ export default function Navbar() {
               </NavLink>
             ))
           }
-        </ul>
+        </ul> */}
         <button onClick={handleSignOut} className='navbar-signOut'><FiLogIn size={18} /> Выйти</button>
       </nav>
     </>

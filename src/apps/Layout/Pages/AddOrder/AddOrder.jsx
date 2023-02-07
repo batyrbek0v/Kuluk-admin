@@ -1,16 +1,35 @@
 import React from 'react'
+import { citiesRef, villageRef } from '../../../../components/Utils/fireStoreRef';
 import { Title } from '../../../../components/Title/Title'
-import './AddOrder.css'
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import { Button, TextField, MenuItem, Box, Backdrop, CircularProgress } from '@mui/material';
-import { orderTariff, payment, paymentPerson, paymentStatus, typeOfOrder } from '../../../../components/Utils';
 import { useForm } from 'react-hook-form';
 import { FormValidation } from './../../../../components/Form/FormValidation/exports';
-import { addDoc, collection, doc, getDoc, getDocs, query, QuerySnapshot, setDoc, where } from 'firebase/firestore';
 import { db } from '../../../../configs';
 import { Loader } from '../../../../components/Loader/Loader';
 import { Header } from '../../../../components/Header/Header';
-import { citiesRef, villageRef } from '../../../../components/Utils/fireStoreRef';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import './AddOrder.css'
+import {
+  Button,
+  TextField,
+  MenuItem,
+  Box,
+  Backdrop,
+  CircularProgress
+} from '@mui/material';
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  where
+} from 'firebase/firestore';
+import {
+  orderTariff,
+  payment,
+  paymentPerson,
+  paymentStatus,
+  typeOfOrder
+} from '../../../../components/Utils';
 
 const AddOrder = () => {
 
@@ -29,9 +48,6 @@ const AddOrder = () => {
   const [district, setDistrict] = React.useState(null)
   const [district2, setDistrict2] = React.useState(null)
   const [open, setOpen] = React.useState(false)
-  // const citiesRef = collection(db, "city")
-
-  // const villageRef = collection(db, "village")
 
   const handleChange = (e) => {
     setCityId(e.target.value)
@@ -110,8 +126,7 @@ const AddOrder = () => {
       const base = await getDocs(q)
         .then(res => {
           setDistrict(res?.docs?.map((doc) => ({ ...doc?.data() })))
-        }
-        )
+        })
     }
     const getDist2 = async () => {
       const q = query(villageRef, where("district", "==", cityId2[0] && cityId2[0]));

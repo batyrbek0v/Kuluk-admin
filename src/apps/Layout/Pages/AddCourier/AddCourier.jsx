@@ -1,16 +1,20 @@
 import React from 'react'
 import { Title } from './../../../../components/Title/Title';
 import { MenuItem, TextField, Button } from '@mui/material';
-import { courierType, cities } from '../../../../components/Utils';
-import './AddCourier.css'
+import { courierType } from '../../../../components/Utils';
+import { FormValidation } from '../../../../components/Form/FormValidation/exports';
+import { citiesRef } from '../../../../components/Utils/fireStoreRef';
 import { useForm } from 'react-hook-form';
 import { FaUserPlus } from 'react-icons/fa'
-import { POST } from '../../../../api/api';
-import { FormValidation } from '../../../../components/Form/FormValidation/exports';
-import { doc, setDoc, getDoc, getDocs, collection } from "firebase/firestore";
 import { db } from '../../../../configs';
-import { async } from '@firebase/util';
 import { Loader } from './../../../../components/Loader/Loader';
+import './AddCourier.css'
+import {
+  doc,
+  setDoc,
+  getDocs,
+} from "firebase/firestore";
+
 const AddCourier = () => {
 
   const [city, setCity] = React.useState(null)
@@ -38,14 +42,11 @@ const AddCourier = () => {
 
   React.useEffect(() => {
     const getCity = async () => {
-      const docRef = collection(db, "city")
-      const data = await getDocs(docRef)
+      const data = await getDocs(citiesRef)
       setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
     }
     getCity()
   }, [])
-
-
 
   const sortCity = city?.sort((a, b) => {
     if (a['id'] < b['id']) return -1

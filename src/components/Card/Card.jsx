@@ -1,12 +1,19 @@
 import React from 'react'
-import './Card.scss'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Menu, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom'
 import { MdDeleteOutline } from 'react-icons/md';
 import { FiEdit, FiMoreHorizontal } from 'react-icons/fi'
 import { db } from '../../configs';
-import { deleteApp } from 'firebase/app';
 import { deleteDoc, doc } from 'firebase/firestore';
+import './Card.scss'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  IconButton,
+  Menu,
+  MenuItem
+} from '@mui/material';
 
 const Card = ({
   id,
@@ -15,14 +22,6 @@ const Card = ({
   packageType,
   paymentMethod,
   paymentStatus,
-  addressFrom,
-  addressTo,
-  sender,
-  senderName,
-  receiver,
-  receiverName,
-  redemption,
-  tariff,
   cost
 }) => {
 
@@ -107,7 +106,7 @@ const Card = ({
             {
               status == 'status_new' && 'Новый'
               || status == 'status_confirmed' && 'Подтвержден'
-              || status == 'status_arrived_sender' && 'Прибыл к отправ-лю'
+              || status == 'status_arrived_sender' && 'Прибыл к отправ'
               || status == 'status_on_courier' && 'У курьера'
               || status == 'status_at_sorting_center' && 'B сорт.центре'
               || status == 'status_delivered' && 'Доставлен'
@@ -140,13 +139,15 @@ const Card = ({
               || paymentMethod == 'optima' && 'Оптима'
               || paymentMethod == 'odengi' && 'О!Деньги'
               || paymentMethod == 'elsom' && 'Элсом'
+              || paymentMethod == 'schet_faktura' && 'Счет фактура'
               || paymentMethod == 'other' && 'Другое'
             }
           </p>
         </div>
         <div className={
           !paymentStatus ? 'orders-card-values not-paid' : 'orders-card-values paid'
-        }>
+        }
+        >
           <p>
             {!paymentStatus ? 'Не оплачен' : 'Оплачен'}
           </p>

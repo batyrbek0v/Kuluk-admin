@@ -10,6 +10,9 @@ import { AiOutlinePlusCircle } from 'react-icons/ai';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+
+
+
 export const sideList = [
   { id: 1, icon: <AssessmentIcon />, title: 'Статистика', path: '/' },
   { id: 2, icon: <AiOutlinePlusCircle size={18} />, title: 'Создать заказ', path: '/addorder' },
@@ -107,8 +110,20 @@ export const columnCount = [
 // SORT-BY-COST
 
 export const sortByCostList = [
-  { id: 1, name: 150, title: '150⃀', },
-  { id: 2, name: 180, title: '180⃀', },
-  { id: 3, name: 220, title: '220⃀', },
-  { id: 4, name: 300, title: '300⃀', },
+  { id: 1, value: 150, name: '150⃀', },
+  { id: 2, value: 180, name: '180⃀', },
+  { id: 3, value: 220, name: '220⃀', },
+  { id: 4, value: 300, name: '300⃀', },
+]
+
+// ORDER-STATUS 
+
+export const orderStatus = [
+  { id: 1, name: 'Новые', value: 'status_new', },
+  { id: 2, name: 'Подтвержденные', value: 'status_confirmed', },
+  { id: 3, name: 'У курьера', value: 'status_on_courier', },
+  { id: 4, name: 'В сорт.центре', value: 'status_at_sorting_center', },
+  { id: 5, name: 'Доставленные', value: 'status_delivered', },
+  { id: 6, name: 'Отклоненные', value: 'status_rejected', },
+  { id: 7, name: 'Отмененные', value: 'status_cancelled', },
 ]
