@@ -1,5 +1,5 @@
 import React from 'react'
-import { citiesRef, villageRef } from '../../../../components/Utils/fireStoreRef';
+import { citiesRef, tariffRef, villageRef } from '../../../../components/Utils/fireStoreRef';
 import { Title } from '../../../../components/Title/Title'
 import { useForm } from 'react-hook-form';
 import { FormValidation } from './../../../../components/Form/FormValidation/exports';
@@ -47,6 +47,7 @@ const AddOrder = () => {
   const [cityId2, setCityId2] = React.useState('')
   const [district, setDistrict] = React.useState(null)
   const [district2, setDistrict2] = React.useState(null)
+  const [tariff, setTariff] = React.useState(null)
   const [open, setOpen] = React.useState(false)
 
   const handleChange = (e) => {
@@ -57,6 +58,7 @@ const AddOrder = () => {
   }
 
   const handlePostOrder = async (order) => {
+    console.log(order)
     try {
       setOpen(!open)
       const docRef = await addDoc(collection(db, 'orders'),
@@ -80,13 +82,15 @@ const AddOrder = () => {
             lon: 74.604228
           },
           tariff: {
-            cost: order.cost,
-            name: order.orderTariff,
-            cost: order.cost,
+            cost: Number(order.cost),
+            name: order.tariff.name,
+            uid: order.tariff.order,
           },
+          tariffId: order.tariff.order,
           cancellationReason: "",
           comments: order.commits,
           cost: Number(order.cost),
+          cityFilter: cityId[0],
           cityFrom: cityId[0],
           cityTo: cityId2[0],
           cityFilter: cityId[0],
@@ -99,21 +103,30 @@ const AddOrder = () => {
           receiver: order.toPhone,
           receiverName: order.toName,
           receiverPhone: order.toPhone,
-          redemption: order.redemption,
+          redemption: Number(order.redemption),
           sender: order.fromPhone,
           senderName: order.fromName,
           senderPhone: order.fromPhone,
           status: "status_new",
-          whoPays: order.paymentPerson,
+          whoPays: Number(order.paymentPerson),
         }
       )
     } catch (e) {
       console.log(e.message)
     } finally {
-      reset()
+      // reset()
       setOpen(false)
     }
   }
+
+
+  React.useEffect(() => {
+    const getTariff = async () => {
+      const data = await getDocs(tariffRef)
+      setTariff(data?.docs?.map((doc) => ({ ...doc?.data() })))
+    }
+    return () => getTariff()
+  }, [])
 
   React.useEffect(() => {
 
@@ -133,10 +146,11 @@ const AddOrder = () => {
       const base = await getDocs(q)
       setDistrict2(base?.docs?.map((doc) => ({ ...doc?.data() })))
     }
+
+
     getCity()
     getDist(cityId)
     getDist2(cityId2)
-
   }, [cityId, cityId2])
 
 
@@ -144,6 +158,8 @@ const AddOrder = () => {
     if (a['id'] < b['id']) return -1
   })
 
+
+  console.log(tariff)
 
   return (
     <>
@@ -196,7 +212,7 @@ const AddOrder = () => {
                         label="Город/район"
                         variant="outlined"
                         size="small"
-                        defaultValue={'1,г. Бишкек'}
+                        defaultValue={''}
                         onChange={handleChange}
                       >
                         {
@@ -350,7 +366,6 @@ const AddOrder = () => {
                           defaultValue={typeOfOrder[0].value}
                           variant="outlined"
                           size="small"
-                          // {...register('city')}
                           error={errors?.orderType && true}
                           {...register('orderType', {
                             required: FormValidation.RequiredInput.required,
@@ -368,17 +383,17 @@ const AddOrder = () => {
                           id="filled-select-currency"
                           select
                           label="Выберите тариф"
-                          defaultValue={orderTariff[0].value}
+                          defaultValue={""}
                           variant="outlined"
                           size="small"
-                          {...register('orderTariff', {
+                          {...register('tariff', {
                             required: FormValidation.RequiredInput.required,
                           })
                           }
                         >
-                          {orderTariff.map((type) => (
-                            <MenuItem key={type.id} value={type.value}>
-                              {type.title}
+                          {tariff?.map((type) => (
+                            <MenuItem key={type.order} value={{ ...type }}>
+                              {type.name} ({type.cost}⃀)
                             </MenuItem>
                           ))}
                         </TextField>
