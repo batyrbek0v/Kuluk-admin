@@ -20,6 +20,7 @@ import {
   addDoc,
   collection,
   getDocs,
+  onSnapshot,
   query,
   where
 } from 'firebase/firestore';
@@ -57,8 +58,46 @@ const AddOrder = () => {
     setCityId2(e.target.value)
   }
 
+
+
+  React.useEffect(() => {
+    const unSub = onSnapshot(tariffRef, snapshot => {
+      setTariff(
+        snapshot.docs.map(doc =>
+        ({
+          ...doc.data(),
+        })
+        ))
+    })
+    return () => unSub()
+  }, [])
+
+  React.useEffect(() => {
+
+    const getCity = async () => {
+      const data = await getDocs(citiesRef)
+      setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
+    }
+    const getDist = async () => {
+      const q = query(villageRef, where("district", "==", cityId[0] && cityId[0]));
+      const base = await getDocs(q)
+        .then(res => {
+          setDistrict(res?.docs?.map((doc) => ({ ...doc?.data() })))
+        })
+    }
+    const getDist2 = async () => {
+      const q = query(villageRef, where("district", "==", cityId2[0] && cityId2[0]));
+      const base = await getDocs(q)
+      setDistrict2(base?.docs?.map((doc) => ({ ...doc?.data() })))
+    }
+
+
+    getCity()
+    getDist(cityId)
+    getDist2(cityId2)
+  }, [cityId, cityId2])
+
   const handlePostOrder = async (order) => {
-    console.log(order)
     try {
       setOpen(!open)
       const docRef = await addDoc(collection(db, 'orders'),
@@ -118,41 +157,6 @@ const AddOrder = () => {
       setOpen(false)
     }
   }
-
-
-  React.useEffect(() => {
-    const getTariff = async () => {
-      const data = await getDocs(tariffRef)
-      setTariff(data?.docs?.map((doc) => ({ ...doc?.data() })))
-    }
-    return () => getTariff()
-  }, [])
-
-  React.useEffect(() => {
-
-    const getCity = async () => {
-      const data = await getDocs(citiesRef)
-      setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
-    }
-    const getDist = async () => {
-      const q = query(villageRef, where("district", "==", cityId[0] && cityId[0]));
-      const base = await getDocs(q)
-        .then(res => {
-          setDistrict(res?.docs?.map((doc) => ({ ...doc?.data() })))
-        })
-    }
-    const getDist2 = async () => {
-      const q = query(villageRef, where("district", "==", cityId2[0] && cityId2[0]));
-      const base = await getDocs(q)
-      setDistrict2(base?.docs?.map((doc) => ({ ...doc?.data() })))
-    }
-
-
-    getCity()
-    getDist(cityId)
-    getDist2(cityId2)
-  }, [cityId, cityId2])
-
 
   const sortCity = city?.sort((a, b) => {
     if (a['id'] < b['id']) return -1
@@ -391,11 +395,13 @@ const AddOrder = () => {
                           })
                           }
                         >
-                          {tariff?.map((type) => (
-                            <MenuItem key={type.order} value={{ ...type }}>
-                              {type.name} ({type.cost}⃀)
-                            </MenuItem>
-                          ))}
+                          {
+                            tariff?.map((type) => (
+                              <MenuItem key={type.order} value={{ ...type }}>
+                                {type.name} ({type.cost}⃀)
+                              </MenuItem>
+                            ))
+                          }
                         </TextField>
                       </Box>
                       <TextField
