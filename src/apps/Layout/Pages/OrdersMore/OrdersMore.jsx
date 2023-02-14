@@ -35,14 +35,16 @@ const OrdersMore = () => {
   const navigate = useNavigate()
 
   const steps = [
-    'Подтвержден',
     'Новый',
+    'Подтвержден',
     'У курьера',
     'B сорт.центре',
     'Доставлен',
   ];
 
   const dateTransform = new Date(+order?.dateCreated?.seconds * 1000)
+
+  console.log(+order?.dateCreated?.seconds * 1000)
 
   const time = {
     day: dateTransform?.getDate(),
@@ -65,7 +67,7 @@ const OrdersMore = () => {
       const orderRef = doc(db, 'orders', `${id}`)
       setTimeout(async () => {
         await deleteDoc(orderRef)
-        alert('Заказ удален, нажмите на "ok" чтобы перейти к заказамн')
+        alert('Заказ удален, нажмите на "ok" чтобы перейти к заказам')
 
         if (alert) {
           navigate('/orders')
@@ -103,6 +105,7 @@ const OrdersMore = () => {
     getOrder()
   }, [])
 
+  console.log(order)
 
   return (
     <>
@@ -129,8 +132,8 @@ const OrdersMore = () => {
                           </Step>title
                         </Stepper>
                         : <Stepper activeStep={
-                          order?.status == 'status_confirmed' ? 0 : ''
-                            || order?.status == 'status_new' && 1
+                          order?.status == 'status_new' ? 0 : ''
+                            || order?.status == 'status_confirmed' && 1
                             || order?.status == 'status_on_courier' && 2
                             || order?.status == 'status_at_sorting_center' && 3
                             || order?.status == 'status_delivered' && 5
@@ -192,7 +195,7 @@ const OrdersMore = () => {
                       <span>
                         {
                           order?.addressTo.districtName
-                            ? order?.addressFrom.districtName
+                            ? order?.addressTo.districtName
                             : '----------'
                         }
                       </span>

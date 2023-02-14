@@ -7,6 +7,7 @@ import { db } from '../../../../configs';
 import { Loader } from '../../../../components/Loader/Loader';
 import { Header } from '../../../../components/Header/Header';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import { useNavigate } from 'react-router-dom';
 import './AddOrder.css'
 import {
   Button,
@@ -14,7 +15,8 @@ import {
   MenuItem,
   Box,
   Backdrop,
-  CircularProgress
+  CircularProgress,
+  Select
 } from '@mui/material';
 import {
   addDoc,
@@ -44,95 +46,96 @@ const AddOrder = () => {
   const date = new Date()
 
   const [city, setCity] = React.useState(null)
-  const [cityId, setCityId] = React.useState('')
-  const [cityId2, setCityId2] = React.useState('')
+  const [city2, setCity2] = React.useState(null)
+  const [cityId, setCityId] = React.useState({})
+  const [cityId2, setCityId2] = React.useState({})
   const [district, setDistrict] = React.useState(null)
   const [district2, setDistrict2] = React.useState(null)
+  const [districtName, setDistrictName] = React.useState('')
+  const navigate = useNavigate()
+
+
+
   const [tariff, setTariff] = React.useState(null)
+  const [test, setTest] = React.useState('')
   const [open, setOpen] = React.useState(false)
-
-  const handleChange = (e) => {
-    setCityId(e.target.value)
-  }
-  const handleChange2 = (e) => {
-    setCityId2(e.target.value)
-  }
-
 
 
   React.useEffect(() => {
-    const unSub = onSnapshot(tariffRef, snapshot => {
+    const settingTariff = onSnapshot(tariffRef, snapshot => {
       setTariff(
-        snapshot.docs.map(doc =>
-        ({
-          ...doc.data(),
-        })
+        snapshot.docs.map(doc => ({ ...doc.data() })
         ))
     })
-    return () => unSub()
+    return () => settingTariff()
   }, [])
 
   React.useEffect(() => {
-
-    const getCity = async () => {
-      const data = await getDocs(citiesRef)
-      setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
-    }
-    const getDist = async () => {
-      const q = query(villageRef, where("district", "==", cityId[0] && cityId[0]));
-      const base = await getDocs(q)
-        .then(res => {
-          setDistrict(res?.docs?.map((doc) => ({ ...doc?.data() })))
-        })
-    }
-    const getDist2 = async () => {
-      const q = query(villageRef, where("district", "==", cityId2[0] && cityId2[0]));
-      const base = await getDocs(q)
-      setDistrict2(base?.docs?.map((doc) => ({ ...doc?.data() })))
-    }
+    const settingCity = onSnapshot(citiesRef, snapshot => {
+      setCity(snapshot.docs.map(doc => ({ ...doc.data(), })))
+    })
+    return () => settingCity()
+  }, [])
 
 
-    getCity()
-    getDist(cityId)
-    getDist2(cityId2)
-  }, [cityId, cityId2])
+  const getDist = async (city) => {
+    setCityId(city.target.value)
+    const id = city.target.value.id
+
+    const filteredDist = query(villageRef, where('district', '==', id))
+    await getDocs(filteredDist)
+      .then(res => setDistrict(res?.docs?.map((doc) => ({ ...doc?.data() }))))
+  }
+
+  const getDist2 = async (city2) => {
+    setCityId2(city2.target.value)
+    const id = city2.target.value.id
+
+    const filteredDist = query(villageRef, where('district', '==', id))
+    await getDocs(filteredDist)
+      .then(res => setDistrict2(res?.docs?.map((doc) => ({ ...doc?.data() }))))
+  }
+
+  const handleChangeTariff = (tariff) => {
+    setTest(tariff.target.value)
+    // console.log(tariff.target.value)
+  }
 
   const handlePostOrder = async (order) => {
+    setOpen(!open)
     try {
-      setOpen(!open)
       const docRef = await addDoc(collection(db, 'orders'),
         {
           addressFrom: {
             address: order.fromAdress,
-            city: cityId[0],
-            cityName: cityId[1],
-            district: order.fromDistrict[1],
-            districtName: order.fromDistrict[0],
+            city: cityId.id,
+            cityName: cityId.name,
+            district: !order.fromDistrict ? '' : Number(order.fromDistrict.split(',')[0]),
+            districtName: !order.fromDistrict ? '' : order.fromDistrict.split(',')[1],
             lat: 42.876254,
             lon: 74.604228
           },
           addressTo: {
             address: order.toAdress,
-            city: cityId2[0],
-            cityName: cityId2[1],
-            district: order.toDistrict[0],
-            districtName: order.toDistrict[1],
+            city: cityId2.id,
+            cityName: cityId2.name,
+            district: !order.toDistrict ? '' : Number(order.toDistrict.split(',')[0]),
+            districtName: !order.toDistrict ? '' : order.toDistrict.split(',')[1],
             lat: 42.876254,
             lon: 74.604228
           },
           tariff: {
-            cost: Number(order.cost),
-            name: order.tariff.name,
-            uid: order.tariff.order,
+            cost: Number(test.split(',')[1]),
+            name: test.split(',')[0],
+            uid: test.split(',')[2],
           },
-          tariffId: order.tariff.order,
+          tariffId: test.split(',')[2],
           cancellationReason: "",
           comments: order.commits,
-          cost: Number(order.cost),
-          cityFilter: cityId[0],
-          cityFrom: cityId[0],
-          cityTo: cityId2[0],
-          cityFilter: cityId[0],
+          cost: order.cost == 0 ? Number(test.split(',')[1]) : Number(order.cost),
+          cityFilter: cityId.id,
+          cityFrom: cityId.id,
+          cityTo: cityId2.id,
           courierOne: "",
           courierTwo: "",
           dateCreated: date,
@@ -147,23 +150,82 @@ const AddOrder = () => {
           senderName: order.fromName,
           senderPhone: order.fromPhone,
           status: "status_new",
+          statusFilter: ["status_new"],
           whoPays: Number(order.paymentPerson),
         }
       )
-    } catch (e) {
-      console.log(e.message)
-    } finally {
-      // reset()
       setOpen(false)
+      setTimeout(async () => {
+        alert('Заказ успешно добавлен, нажмите на "ok" чтобы перейти к заказам')
+        if (alert) {
+          navigate('/orders')
+        }
+      }, 1000)
+      reset()
+
+    } catch (e) {
+      setOpen(false)
+      console.log(e.message)
     }
+    console.log(
+      {
+        addressFrom: {
+          address: order.fromAdress,
+          city: cityId.id,
+          cityName: cityId.name,
+          district: !order.fromDistrict ? '' : Number(order.fromDistrict.split(',')[0]),
+          districtName: !order.fromDistrict ? '' : order.fromDistrict.split(',')[1],
+          lat: 42.876254,
+          lon: 74.604228
+        },
+        addressTo: {
+          address: order.toAdress,
+          city: cityId2.id,
+          cityName: cityId2.name,
+          district: !order.toDistrict ? '' : Number(order.toDistrict.split(',')[0]),
+          districtName: !order.toDistrict ? '' : order.toDistrict.split(',')[1],
+          lat: 42.876254,
+          lon: 74.604228
+        },
+        tariff: {
+          cost: Number(test.split(',')[1]),
+          name: test.split(',')[0],
+          uid: test.split(',')[2],
+        },
+        tariffId: test.split(',')[2],
+        cancellationReason: "",
+        comments: order.commits,
+        cost: order.cost == 0 ? Number(test.split(',')[1]) : Number(order.cost),
+        cityFilter: cityId.id,
+        cityFrom: cityId.id,
+        cityTo: cityId2.id,
+        courierOne: "",
+        courierTwo: "",
+        dateCreated: date,
+        packageType: order.orderType,
+        paymentMethod: order.payment,
+        paymentStatus: order.paymentStatus == 'false' ? false : true,
+        receiver: order.toPhone,
+        receiverName: order.toName,
+        receiverPhone: order.toPhone,
+        redemption: Number(order.redemption),
+        sender: order.fromPhone,
+        senderName: order.fromName,
+        senderPhone: order.fromPhone,
+        status: "status_new",
+        statusFilter: ["status_new"],
+        whoPays: Number(order.paymentPerson),
+      }
+    )
   }
+
+
+
 
   const sortCity = city?.sort((a, b) => {
     if (a['id'] < b['id']) return -1
   })
 
-
-  console.log(tariff)
 
   return (
     <>
@@ -211,46 +273,47 @@ const AddOrder = () => {
                         }
                       />
                       <TextField
-                        id="filled-select-currency"
+                        id="fromCity"
                         select
                         label="Город/район"
                         variant="outlined"
                         size="small"
                         defaultValue={''}
-                        onChange={handleChange}
+                        onChange={getDist}
                       >
                         {
                           city?.map((city) => (
                             <MenuItem
                               key={city.id}
-                              value={[city.id, city.name]}
+                              value={city}
                               name={city.name}
-                              id={city.id}
                             >
                               {city.name}
                             </MenuItem>
                           ))
                         }
                       </TextField>
-                      <TextField
-                        id="outlined-basic"
+                      <select
+                        id="fromDistrict"
                         select
-                        label="Село/микрорайон"
                         variant="outlined"
                         size='small'
-                        placeholder='Введите село/микрорайон'
-                        defaultValue={''}
-                        disabled={!cityId ? true : false}
+                        disabled={!cityId.id ? true : false}
                         {...register('fromDistrict')}
                       >
+                        <option selected disabled>Выберите район</option>
                         {
                           district?.map((city) => (
-                            <MenuItem key={city.id} value={[city.name, city.id]}>
+                            <option
+                              key={city.id}
+                              name={city.name}
+                              value={[city.id, city.name]}
+                            >
                               {city.name}
-                            </MenuItem>
+                            </option>
                           ))
                         }
-                      </TextField>
+                      </select>
                       <TextField
                         id="outlined-basic"
                         label="Введите адрес доставки"
@@ -302,43 +365,40 @@ const AddOrder = () => {
                         }
                       />
                       <TextField
-                        id="filled-select-currency2"
+                        id="ToCity"
                         select
                         label="Город/район"
                         defaultValue={''}
                         variant="outlined"
                         size="small"
                         error={errors?.toCity && true}
-                        onChange={handleChange2}
+                        onChange={getDist2}
                       >
                         {
                           city?.map((city) => (
-                            <MenuItem key={city.id} value={[city.id, city.name]}>
+                            <MenuItem key={city.id} value={city}>
                               {city.name}
                             </MenuItem>
                           ))
                         }
                       </TextField>
-                      <TextField
-                        id="outlined-basic"
-                        select
-                        label="Село/микрорайон"
-                        variant="outlined"
-                        size='small'
-                        placeholder='Введите село/микрорайон'
-                        // defaultValue={district2 && district2[0]?.name}
-                        defaultValue={''}
-                        disabled={!cityId2 ? true : false}
+                      <select
+                        disabled={!cityId2.id ? true : false}
                         {...register('toDistrict')}
                       >
+                        <option selected disabled>Выберите район</option>
                         {
                           district2?.map((city) => (
-                            <MenuItem key={city.id} value={[city.id, city.name]}>
+                            <option
+                              key={city.id}
+                              name={city.name}
+                              value={[city.id, city.name]}
+                            >
                               {city.name}
-                            </MenuItem>
+                            </option>
                           ))
                         }
-                      </TextField>
+                      </select>
                       <TextField
                         id="outlined-basic"
                         label="Введите адрес доставки"
@@ -382,7 +442,7 @@ const AddOrder = () => {
                             </MenuItem>
                           ))}
                         </TextField>
-                        <TextField
+                        <select
                           sx={{ width: '90%' }}
                           id="filled-select-currency"
                           select
@@ -390,20 +450,23 @@ const AddOrder = () => {
                           defaultValue={""}
                           variant="outlined"
                           size="small"
-                          {...register('tariff', {
-                            required: FormValidation.RequiredInput.required,
-                          })
-                          }
+                          onChange={handleChangeTariff}
                         >
                           {
                             tariff?.map((type) => (
-                              <MenuItem key={type.order} value={{ ...type }}>
+                              <option key={type.order} value={[type.name, type.cost, type.order]}>
                                 {type.name} ({type.cost}⃀)
-                              </MenuItem>
+                              </option>
                             ))
                           }
-                        </TextField>
+                        </select>
                       </Box>
+                      <input
+                        type="text"
+                        value={test.split(',')[1]}
+                        {...register('cost')
+                        }
+                      />
                       <TextField
                         id="outlined-basic"
                         label="Выкуп (0 если без выкупа)"
@@ -413,18 +476,6 @@ const AddOrder = () => {
                         placeholder='0'
                         type="number"
                         {...register('redemption', {
-                          required: FormValidation.RequiredInput.required,
-                        })
-                        }
-                      />
-                      <TextField
-                        id="outlined-basic"
-                        label="Введите стоимость доставки"
-                        variant="outlined"
-                        size='small'
-                        defaultValue={150}
-                        type="number"
-                        {...register('cost', {
                           required: FormValidation.RequiredInput.required,
                         })
                         }
@@ -522,5 +573,4 @@ const AddOrder = () => {
     </>
   )
 }
-
 export default AddOrder

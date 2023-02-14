@@ -26,6 +26,7 @@ const Card = ({
 }) => {
 
   const navigate = useNavigate()
+  
   const dateTransform = new Date(+dateCreated?.seconds * 1000)
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [deleting, setDeleting] = React.useState(false)
