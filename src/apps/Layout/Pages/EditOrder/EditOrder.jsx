@@ -150,14 +150,14 @@ const EditOrder = () => {
             lon: 74.604228
           },
           tariff: {
-            cost: !editOrder.tariff.cost ? order.tariff.cost : editOrder.tariff.cost,
-            name: !editOrder.tariff.name ? order.tariff.name : editOrder.tariff.name,
-            uid: !editOrder.tariff.order ? order.tariff.uid : String(editOrder.tariff.order),
+            cost: !editOrder.tariff?.cost ? order?.tariff?.cost : editOrder.tariff.cost,
+            name: !editOrder.tariff?.name ? order?.tariff?.name : editOrder.tariff.name,
+            uid: !editOrder.tariff?.order ? order?.tariff?.uid : String(editOrder.tariff.order),
           },
-          tariffId: !editOrder.tariff.order ? order.tariff.uid : String(editOrder.tariff.order),
+          tariffId: !editOrder.tariff.order ? order?.tariff?.uid : String(editOrder.tariff.order),
           cancellationReason: "",
           comments: editOrder.commits,
-          cost: !editOrder.cost ? editOrder.tariff.cost : Number(editOrder.cost),
+          cost: !editOrder.cost ? editOrder.tariff?.cost : Number(editOrder.cost),
           cityFilter: !cityId.id ? order?.addressFrom.city : cityId.id,
           cityFrom: !cityId.id ? order?.addressFrom.city : cityId.id,
           cityTo: !cityId2.id ? order?.addressTo.city : cityId2.id,
@@ -417,7 +417,7 @@ const EditOrder = () => {
                           sx={{ width: '90%' }}
                           id="filled-select-currency"
                           select
-                          label={`${order.tariff?.name} (${order.tariff.cost}С̲)`}
+                          label={`${order?.tariff?.name} (${order?.tariff?.cost}С̲)`}
                           placeholder='fqwfqfw'
                           defaultValue={""}
                           variant="outlined"
