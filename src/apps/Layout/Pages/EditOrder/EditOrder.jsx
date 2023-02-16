@@ -54,6 +54,7 @@ const EditOrder = () => {
   const [district2, setDistrict2] = React.useState(null)
   const [open, setOpen] = React.useState(false)
   const [tariff, setTariff] = React.useState(null)
+  const [tariff2, setTariff2] = React.useState(null)
 
 
   const getOrder = async () => {
@@ -75,26 +76,12 @@ const EditOrder = () => {
     return () => settingTariff()
   }, [])
 
-  // React.useEffect(() => {
-
-  //   const gettingDist = async () => {
-  //     const id2 = await order?.addressFrom.city
-  //     console.log(id2)
-  //     const filteredDist = query(villageRef, where('district', '==', id2))
-  //     await getDocs(filteredDist)
-  //       .then(res => setDistrict(res?.docs?.map((doc) => ({ ...doc?.data() }))))
-  //   }
-  //   return () => gettingDist()
-
-  // }, [])
-
   React.useEffect(() => {
     const settingCity = onSnapshot(citiesRef, snapshot => {
       setCity(snapshot.docs.map(doc => ({ ...doc.data(), })))
     })
     return () => settingCity()
   }, [])
-
 
 
   const getDist = async (city) => {
@@ -114,6 +101,10 @@ const EditOrder = () => {
     const filteredDist = query(villageRef, where('district', '==', id))
     await getDocs(filteredDist)
       .then(res => setDistrict2(res?.docs?.map((doc) => ({ ...doc?.data() }))))
+  }
+
+  const handleChangeTariff = (tariff) => {
+    setTariff2(tariff.target.value)
   }
 
   const handleEditOrder = async (editOrder) => {
@@ -150,14 +141,14 @@ const EditOrder = () => {
             lon: 74.604228
           },
           tariff: {
-            cost: !editOrder.tariff?.cost ? order?.tariff?.cost : editOrder.tariff.cost,
-            name: !editOrder.tariff?.name ? order?.tariff?.name : editOrder.tariff.name,
-            uid: !editOrder.tariff?.order ? order?.tariff?.uid : String(editOrder.tariff.order),
+            cost: !tariff2?.cost ? order?.tariff?.cost : tariff2.cost,
+            name: !tariff2?.name ? order?.tariff?.name : tariff2.name,
+            uid: !tariff2?.order ? order?.tariff?.uid : String(tariff2.order),
           },
-          tariffId: !editOrder.tariff.order ? order?.tariff?.uid : String(editOrder.tariff.order),
+          tariffId: !tariff2?.order ? order?.tariff?.uid : String(tariff2.order),
           cancellationReason: "",
           comments: editOrder.commits,
-          cost: !editOrder.cost ? editOrder.tariff?.cost : Number(editOrder.cost),
+          cost: !editOrder.cost ? tariff2?.cost : Number(editOrder.cost),
           cityFilter: !cityId.id ? order?.addressFrom.city : cityId.id,
           cityFrom: !cityId.id ? order?.addressFrom.city : cityId.id,
           cityTo: !cityId2.id ? order?.addressTo.city : cityId2.id,
@@ -187,10 +178,13 @@ const EditOrder = () => {
     } catch (e) {
       console.log(e.message)
     }
-
   }
 
-  console.log(order)
+
+
+  const sortCity = city?.sort((a, b) => {
+    if (a['id'] < b['id']) return -1
+  })
 
   return (
     <>
@@ -211,9 +205,8 @@ const EditOrder = () => {
                     <div className='order-input-block'>
                       <TextField
                         id="outlined-basic"
-                        label="Введите номер телефона"
+                        label="Номер телефона"
                         variant="outlined"
-                        placeholder='Номер отправителя'
                         type="number"
                         helperText={errors?.fromPhone && 'Масимум 10 символов'}
                         error={errors?.fromPhone && true}
@@ -227,9 +220,8 @@ const EditOrder = () => {
                       />
                       <TextField
                         id="outlined-basic"
-                        label="Введите имя отправителя"
+                        label="Имя отправителя"
                         variant="outlined"
-                        placeholder='Имя отправителя'
                         helperText={errors?.fromName?.message}
                         error={errors?.fromName && true}
                         defaultValue={order?.senderName}
@@ -240,9 +232,10 @@ const EditOrder = () => {
                         }
                       />
                       <TextField
+                        className='edit-order-input'
                         id="filled-select-currency"
                         select
-                        label={`Город/${order?.addressFrom.cityName}`}
+                        label={!cityId ? `${order?.addressFrom.cityName}` : cityId.name}
                         variant="outlined"
                         size="small"
                         onChange={getDist}
@@ -281,9 +274,8 @@ const EditOrder = () => {
                       </select>
                       <TextField
                         id="outlined-basic"
-                        label="Введите адрес доставки"
+                        label="Адрес доставки"
                         variant="outlined"
-                        placeholder='Адрес'
                         size="small"
                         error={errors?.fromAdress ? true : false}
                         helperText={errors ? errors?.fromAdress?.message : ''}
@@ -304,9 +296,8 @@ const EditOrder = () => {
                     <div className="order-input-block">
                       <TextField
                         id="outlined-basic"
-                        label="Введите номер телефона"
+                        label="Номер телефона"
                         variant="outlined"
-                        placeholder='Номер получателя'
                         type="number"
                         size="small"
                         helperText={errors?.toPhone && 'Масимум 10 символов'}
@@ -320,10 +311,9 @@ const EditOrder = () => {
                       />
                       <TextField
                         id="outlined-basic"
-                        label="Введите имя получателя"
+                        label="Имя получателя"
                         variant="outlined"
                         size="small"
-                        placeholder='Имя получателя'
                         helperText={errors?.toName?.message}
                         error={errors?.toName && true}
                         defaultValue={order?.receiverName}
@@ -333,9 +323,10 @@ const EditOrder = () => {
                         }
                       />
                       <TextField
+                        className='edit-order-input'
                         id="filled-select-currency2"
                         select
-                        label={`Город/${order?.addressTo.cityName}`}
+                        label={!cityId2 ? `${order?.addressTo.cityName}` : cityId2.name}
                         variant="outlined"
                         size="small"
                         error={errors?.toCity && true}
@@ -368,10 +359,9 @@ const EditOrder = () => {
                       </select>
                       <TextField
                         id="outlined-basic"
-                        label="Введите адрес доставки"
+                        label="Адрес доставки"
                         variant="outlined"
                         size="small"
-                        placeholder='Адрес'
                         error={errors?.toAdress && true}
                         helperText={errors?.toAdress?.message}
                         defaultValue={order?.addressTo.address}
@@ -394,7 +384,7 @@ const EditOrder = () => {
                           sx={{ width: '90%' }}
                           id="filled-select-currency"
                           select
-                          label="Выберите тип посылки"
+                          label="Тип посылки"
                           defaultValue={order?.packageType}
                           variant="outlined"
                           size="small"
@@ -413,13 +403,13 @@ const EditOrder = () => {
                         <TextField
                           sx={{ width: '90%' }}
                           id="filled-select-currency"
+                          className='edit-order-input'
                           select
-                          label={`${order?.tariff?.name} (${order?.tariff?.cost}С̲)`}
-                          placeholder='fqwfqfw'
+                          label={!tariff2 ? `${order?.tariff?.name} (${order?.tariff?.cost}С̲)` : ''}
                           defaultValue={""}
                           variant="outlined"
                           size="small"
-                          {...register('tariff')}
+                          onChange={handleChangeTariff}
                         >
                           {
                             tariff?.map((type) => (
@@ -433,7 +423,7 @@ const EditOrder = () => {
                       <TextField
                         type="text"
                         size='small'
-                        label="Введите цену"
+                        label="Стоимость доставки"
                         defaultValue={order?.cost}
                         {...register('cost')}
                       />
@@ -442,7 +432,6 @@ const EditOrder = () => {
                         label="Выкуп (0 если без выкупа)"
                         variant="outlined"
                         defaultValue={order?.redemption}
-                        placeholder='0'
                         type="number"
                         size="small"
                         {...register('redemption', {
@@ -453,7 +442,7 @@ const EditOrder = () => {
                       <TextField
                         id="filled-select-currency"
                         select
-                        label="Выберите кто оплачивает"
+                        label="Кто оплачивает"
                         defaultValue={
                           order?.whoPays === 1 ? paymentPerson[0].value : paymentPerson[1].value
                         }
@@ -498,7 +487,7 @@ const EditOrder = () => {
                       <TextField
                         id="filled-select-currency"
                         select
-                        label="Выберите стуст оплаты"
+                        label="Статус оплаты"
                         defaultValue={`${order?.paymentStatus}`}
                         variant="outlined"
                         size="small"

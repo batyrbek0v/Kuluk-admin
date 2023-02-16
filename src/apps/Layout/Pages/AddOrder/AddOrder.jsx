@@ -96,10 +96,6 @@ const AddOrder = () => {
       .then(res => setDistrict2(res?.docs?.map((doc) => ({ ...doc?.data() }))))
   }
 
-  const handleChangeTariff = (tariff) => {
-    setTest(tariff.target.value)
-  }
-
   const handlePostOrder = async (order) => {
     setOpen(!open)
     try {
@@ -219,8 +215,6 @@ const AddOrder = () => {
   }
 
 
-
-
   const sortCity = city?.sort((a, b) => {
     if (a['id'] < b['id']) return -1
   })
@@ -244,9 +238,8 @@ const AddOrder = () => {
                     <div className='order-input-block'>
                       <TextField
                         id="outlined-basic"
-                        label="Введите номер телефона"
+                        label="Номер телефона"
                         variant="outlined"
-                        placeholder='Номер отправителя'
                         type="number"
                         size='small'
                         helperText={errors?.fromPhone && 'Масимум 10 символов'}
@@ -259,9 +252,8 @@ const AddOrder = () => {
                       />
                       <TextField
                         id="outlined-basic"
-                        label="Введите имя отправителя"
+                        label="Имя отправителя"
                         variant="outlined"
-                        placeholder='Имя отправителя'
                         size='small'
                         helperText={errors?.fromName?.message}
                         error={errors?.fromName && true}
@@ -311,10 +303,9 @@ const AddOrder = () => {
                       </select>
                       <TextField
                         id="outlined-basic"
-                        label="Введите адрес доставки"
+                        label="Адрес доставки"
                         variant="outlined"
                         size='small'
-                        placeholder='Адрес'
                         error={errors?.fromAdress ? true : false}
                         helperText={errors ? errors?.fromAdress?.message : ''}
                         {...register('fromAdress', {
@@ -333,9 +324,8 @@ const AddOrder = () => {
                     <div className="order-input-block">
                       <TextField
                         id="outlined-basic"
-                        label="Введите номер телефона"
+                        label="Номер телефона"
                         variant="outlined"
-                        placeholder='Номер получателя'
                         type="number"
                         size='small'
                         helperText={errors?.toPhone && 'Масимум 10 символов'}
@@ -348,10 +338,9 @@ const AddOrder = () => {
                       />
                       <TextField
                         id="outlined-basic"
-                        label="Введите имя получателя"
+                        label="Имя получателя"
                         variant="outlined"
                         size='small'
-                        placeholder='Имя получателя'
                         helperText={errors?.toName?.message}
                         error={errors?.toName && true}
                         {...register('toName', {
@@ -397,9 +386,8 @@ const AddOrder = () => {
                       </select>
                       <TextField
                         id="outlined-basic"
-                        label="Введите адрес доставки"
+                        label="Адрес доставки"
                         variant="outlined"
-                        placeholder='Адрес'
                         size='small'
                         error={errors?.toAdress && true}
                         helperText={errors?.toAdress?.message}
@@ -422,7 +410,7 @@ const AddOrder = () => {
                           sx={{ width: '90%' }}
                           id="filled-select-currency"
                           select
-                          label="Выберите тип посылки"
+                          label="Тип посылки"
                           defaultValue={typeOfOrder[0].value}
                           variant="outlined"
                           size="small"
@@ -442,7 +430,7 @@ const AddOrder = () => {
                           sx={{ width: '90%' }}
                           id="filled-select-currency"
                           select
-                          label="Выберите тариф"
+                          label="Тариф"
                           defaultValue={""}
                           variant="outlined"
                           size="small"
@@ -460,7 +448,7 @@ const AddOrder = () => {
                       <TextField
                         type="text"
                         size='small'
-                        label="Введите цену"
+                        label=" цену"
                         {...register('cost')}
                       />
                       <TextField
@@ -469,7 +457,6 @@ const AddOrder = () => {
                         variant="outlined"
                         size='small'
                         defaultValue={0}
-                        placeholder='0'
                         type="number"
                         {...register('redemption', {
                           required: FormValidation.RequiredInput.required,
@@ -479,7 +466,7 @@ const AddOrder = () => {
                       <TextField
                         id="filled-select-currency"
                         select
-                        label="Выберите кто оплачивает"
+                        label="Кто оплачивает"
                         defaultValue={paymentPerson[0].value}
                         variant="outlined"
                         size="small"
@@ -515,7 +502,7 @@ const AddOrder = () => {
                       <TextField
                         id="filled-select-currency"
                         select
-                        label="Выберите стуст оплаты"
+                        label="Статус оплаты"
                         defaultValue={paymentStatus[0].value}
                         variant="outlined"
                         size="small"
