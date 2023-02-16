@@ -190,6 +190,7 @@ const EditOrder = () => {
 
   }
 
+  if (!order) return <Loader />
 
   return (
     <>
