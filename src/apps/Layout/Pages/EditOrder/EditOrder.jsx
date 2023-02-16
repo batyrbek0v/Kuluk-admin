@@ -56,14 +56,14 @@ const EditOrder = () => {
   const [tariff, setTariff] = React.useState(null)
 
 
+  const getOrder = async () => {
+    const docRef = doc(db, 'orders', `${id}`)
+    const docSnap = await getDoc(docRef)
+    setOrder({ ...docSnap.data(), id: docSnap.id })
+  }
 
   React.useEffect(() => {
-    const getOrders = async () => {
-      const docRef = doc(db, 'orders', `${id}`)
-      const docSnap = await getDoc(docRef)
-      setOrder({ ...docSnap.data(), id: docSnap.id })
-    }
-    return () => getOrders()
+    getOrder()
   }, [])
 
   React.useEffect(() => {
@@ -190,6 +190,7 @@ const EditOrder = () => {
 
   }
 
+  console.log(order)
 
   return (
     <>
