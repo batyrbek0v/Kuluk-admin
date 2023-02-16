@@ -26,7 +26,7 @@ const Card = ({
 }) => {
 
   const navigate = useNavigate()
-  
+
   const dateTransform = new Date(+dateCreated?.seconds * 1000)
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [deleting, setDeleting] = React.useState(false)
@@ -93,39 +93,39 @@ const Card = ({
           </time>
         </div>
         <div className={
-          status == 'status_new' && 'orders-card-values new-order'
-          || status == 'status_confirmed' && 'orders-card-values confirmed-order'
-          || status == 'status_arrived_sender' && 'orders-card-values arrived-sender-order'
-          || status == 'status_on_courier' && 'orders-card-values on-courier-order'
-          || status == 'status_at_sorting_center' && 'orders-card-values at-sorting-order'
-          || status == 'status_delivered' && 'orders-card-values delivered-order'
-          || status == 'status_rejected' && 'orders-card-values rejected-order'
-          || status == 'status_cancelled' && 'orders-card-values cancelled-order'
+          status === 'status_new' ? 'orders-card-values new-order' : ''
+            || status === 'status_confirmed' ? 'orders-card-values confirmed-order' : ''
+              || status === 'status_arrived_sender' ? 'orders-card-values arrived-sender-order' : ''
+                || status === 'status_on_courier' ? 'orders-card-values on-courier-order' : ''
+                  || status === 'status_at_sorting_center' ? 'orders-card-values at-sorting-order' : ''
+                    || status === 'status_delivered' ? 'orders-card-values delivered-order' : ''
+                      || status === 'status_rejected' ? 'orders-card-values rejected-order' : ''
+                        || status === 'status_cancelled' ? 'orders-card-values cancelled-order' : ''
         }
         >
           <p>
             {
-              status == 'status_new' && 'Новый'
-              || status == 'status_confirmed' && 'Подтвержден'
-              || status == 'status_arrived_sender' && 'Прибыл к отправ'
-              || status == 'status_on_courier' && 'У курьера'
-              || status == 'status_at_sorting_center' && 'B сорт.центре'
-              || status == 'status_delivered' && 'Доставлен'
-              || status == 'status_rejected' && 'Отклонен'
-              || status == 'status_cancelled' && 'Отменен'
+              status === 'status_new' && 'Новый'
+              || status === 'status_confirmed' && 'Подтвержден'
+              || status === 'status_arrived_sender' && 'Прибыл к отправ'
+              || status === 'status_on_courier' && 'У курьера'
+              || status === 'status_at_sorting_center' && 'B сорт.центре'
+              || status === 'status_delivered' && 'Доставлен'
+              || status === 'status_rejected' && 'Отклонен'
+              || status === 'status_cancelled' && 'Отменен'
             }
           </p>
         </div>
         <div className='orders-card-values'>
           <p>
             {
-              packageType == 'document' && 'Документ'
-              || packageType == 'medicine' && 'Лекарство'
-              || packageType == 'large_box' && 'L коробка'
-              || packageType == 'small_box' && 'S коробка'
-              || packageType == 'box' && 'M коробка'
-              || packageType == 'food' && 'Еда'
-              || packageType == 'other' && 'Другое'
+              (packageType === 'document' && 'Документ')
+              || packageType === 'medicine' && 'Лекарство'
+              || packageType === 'large_box' && 'L коробка'
+              || packageType === 'small_box' && 'S коробка'
+              || packageType === 'box' && 'M коробка'
+              || packageType === 'food' && 'Еда'
+              || packageType === 'other' && 'Другое'
             }
           </p>
         </div>
@@ -135,13 +135,13 @@ const Card = ({
         <div className='orders-card-values'>
           <p>
             {
-              paymentMethod == 'cash' && 'Наличными'
-              || paymentMethod == 'mbank' && 'МБАНК'
-              || paymentMethod == 'optima' && 'Оптима'
-              || paymentMethod == 'odengi' && 'О!Деньги'
-              || paymentMethod == 'elsom' && 'Элсом'
-              || paymentMethod == 'schet_faktura' && 'Счет фактура'
-              || paymentMethod == 'other' && 'Другое'
+              (paymentMethod === 'cash' && 'Наличными')
+              || paymentMethod === 'mbank' && 'МБАНК'
+              || paymentMethod === 'optima' && 'Оптима'
+              || paymentMethod === 'odengi' && 'О!Деньги'
+              || paymentMethod === 'elsom' && 'Элсом'
+              || paymentMethod === 'schet_faktura' && 'Счет фактура'
+              || paymentMethod === 'other' && 'Другое'
             }
           </p>
         </div>

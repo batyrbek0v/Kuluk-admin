@@ -8,7 +8,7 @@ import { Loader } from '../../../../components/Loader/Loader';
 import { Header } from '../../../../components/Header/Header';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { useNavigate } from 'react-router-dom';
-import './AddOrder.css'
+import './AddOrder.scss'
 import {
   Button,
   TextField,
@@ -45,6 +45,7 @@ const AddOrder = () => {
 
   const date = new Date()
 
+  const navigate = useNavigate()
   const [city, setCity] = React.useState(null)
   const [city2, setCity2] = React.useState(null)
   const [cityId, setCityId] = React.useState({})
@@ -52,7 +53,6 @@ const AddOrder = () => {
   const [district, setDistrict] = React.useState(null)
   const [district2, setDistrict2] = React.useState(null)
   const [districtName, setDistrictName] = React.useState('')
-  const navigate = useNavigate()
 
 
 
@@ -98,7 +98,6 @@ const AddOrder = () => {
 
   const handleChangeTariff = (tariff) => {
     setTest(tariff.target.value)
-    // console.log(tariff.target.value)
   }
 
   const handlePostOrder = async (order) => {
@@ -125,14 +124,14 @@ const AddOrder = () => {
             lon: 74.604228
           },
           tariff: {
-            cost: Number(test.split(',')[1]),
-            name: test.split(',')[0],
-            uid: test.split(',')[2],
+            cost: order.tariff.cost,
+            name: order.tariff.name,
+            uid: String(order.tariff.order),
           },
-          tariffId: test.split(',')[2],
+          tariffId: String(order.tariff.order),
           cancellationReason: "",
           comments: order.commits,
-          cost: order.cost == 0 ? Number(test.split(',')[1]) : Number(order.cost),
+          cost: !order.cost ? order.tariff.cost : Number(order.cost),
           cityFilter: cityId.id,
           cityFrom: cityId.id,
           cityTo: cityId2.id,
@@ -188,14 +187,14 @@ const AddOrder = () => {
           lon: 74.604228
         },
         tariff: {
-          cost: Number(test.split(',')[1]),
-          name: test.split(',')[0],
-          uid: test.split(',')[2],
+          cost: order.tariff.cost,
+          name: order.tariff.name,
+          uid: String(order.tariff.order),
         },
-        tariffId: test.split(',')[2],
+        tariffId: String(order.tariff.order),
         cancellationReason: "",
         comments: order.commits,
-        cost: order.cost == 0 ? Number(test.split(',')[1]) : Number(order.cost),
+        cost: !order.cost ? order.tariff.cost : Number(order.cost),
         cityFilter: cityId.id,
         cityFrom: cityId.id,
         cityTo: cityId2.id,
@@ -225,7 +224,6 @@ const AddOrder = () => {
   const sortCity = city?.sort((a, b) => {
     if (a['id'] < b['id']) return -1
   })
-
 
   return (
     <>
@@ -294,10 +292,7 @@ const AddOrder = () => {
                         }
                       </TextField>
                       <select
-                        id="fromDistrict"
-                        select
-                        variant="outlined"
-                        size='small'
+                        className='district-select'
                         disabled={!cityId.id ? true : false}
                         {...register('fromDistrict')}
                       >
@@ -383,6 +378,7 @@ const AddOrder = () => {
                         }
                       </TextField>
                       <select
+                        className='district-select'
                         disabled={!cityId2.id ? true : false}
                         {...register('toDistrict')}
                       >
@@ -442,7 +438,7 @@ const AddOrder = () => {
                             </MenuItem>
                           ))}
                         </TextField>
-                        <select
+                        <TextField
                           sx={{ width: '90%' }}
                           id="filled-select-currency"
                           select
@@ -450,22 +446,22 @@ const AddOrder = () => {
                           defaultValue={""}
                           variant="outlined"
                           size="small"
-                          onChange={handleChangeTariff}
+                          {...register('tariff')}
                         >
                           {
                             tariff?.map((type) => (
-                              <option key={type.order} value={[type.name, type.cost, type.order]}>
-                                {type.name} ({type.cost}⃀)
-                              </option>
+                              <MenuItem key={type.order} value={type}>
+                                {type.name} ({type.cost}С̲)
+                              </MenuItem>
                             ))
                           }
-                        </select>
+                        </TextField>
                       </Box>
-                      <input
+                      <TextField
                         type="text"
-                        value={test.split(',')[1]}
-                        {...register('cost')
-                        }
+                        size='small'
+                        label="Введите цену"
+                        {...register('cost')}
                       />
                       <TextField
                         id="outlined-basic"

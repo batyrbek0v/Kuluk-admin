@@ -4,11 +4,8 @@ import { FaWalking } from 'react-icons/fa'
 import { FaClipboardList } from 'react-icons/fa'
 import { MdDeliveryDining } from 'react-icons/md'
 import { TbTruckDelivery } from 'react-icons/tb'
-import { BsTable } from 'react-icons/bs'
-import { handleSignOut } from '../../configs'
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 
@@ -43,10 +40,10 @@ export const typeOfOrder = [
   { id: 7, value: 'other', name: 'Другое', },
 ]
 export const orderTariff = [
-  { id: 1, value: 'По городу', title: 'По городу (150⃀)', },
-  { id: 2, value: 'Жилмассив', title: 'Жилмассив (220⃀)', },
-  { id: 3, value: 'От двери до двери', title: 'От двери до двери (180⃀)', },
-  { id: 4, value: 'Регионы', title: 'Регионы (300⃀)', },
+  { id: 1, value: 'По городу', title: 'По городу (150С̲)', },
+  { id: 2, value: 'Жилмассив', title: 'Жилмассив (220С̲)', },
+  { id: 3, value: 'От двери до двери', title: 'От двери до двери (180С̲)', },
+  { id: 4, value: 'Регионы', title: 'Регионы (300С̲)', },
 ]
 export const payment = [
   { id: 1, value: "cash", title: 'Наличными', },
@@ -58,8 +55,8 @@ export const payment = [
 ]
 
 export const paymentStatus = [
-  { id: 1, value: false, title: 'Не оплачен', },
-  { id: 2, value: true, title: 'Оплачен', },
+  { id: 1, value: "false", title: 'Не оплачен', },
+  { id: 2, value: "true", title: 'Оплачен', },
 ]
 export const paymentPerson = [
   { id: 1, value: '1', title: 'Отправитель', },
@@ -110,10 +107,10 @@ export const columnCount = [
 // SORT-BY-COST
 
 export const sortByCostList = [
-  { id: 1, value: 150, name: '150⃀', },
-  { id: 2, value: 180, name: '180⃀', },
-  { id: 3, value: 220, name: '220⃀', },
-  { id: 4, value: 300, name: '300⃀', },
+  { id: 1, value: 150, name: '150С̲', },
+  { id: 2, value: 180, name: '180С̲', },
+  { id: 3, value: 220, name: '220С̲', },
+  { id: 4, value: 300, name: '300С̲', },
 ]
 
 // ORDER-STATUS 

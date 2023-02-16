@@ -5,7 +5,7 @@ import { Loader } from './../../../../components/Loader/Loader';
 import { payment } from './../../../../components/Utils/index';
 import { Header } from '../../../../components/Header/Header';
 import { Title } from './../../../../components/Title/Title';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { db } from '../../../../configs';
 import { FiEdit } from 'react-icons/fi';
@@ -18,13 +18,11 @@ import {
   CircularProgress
 } from '@mui/material';
 import {
-  orderTariff,
   paymentPerson,
   paymentStatus,
   typeOfOrder
 } from '../../../../components/Utils';
 import {
-  collection,
   doc,
   getDoc,
   getDocs,
@@ -46,8 +44,7 @@ const EditOrder = () => {
     formState: { errors }
   } = useForm()
 
-  // const citiesRef = collection(db, "city")
-  // const villageRef = collection(db, "village")
+  const navigate = useNavigate()
 
   const [order, setOrder] = React.useState(null)
   const [city, setCity] = React.useState(null)
@@ -57,8 +54,6 @@ const EditOrder = () => {
   const [district2, setDistrict2] = React.useState(null)
   const [open, setOpen] = React.useState(false)
   const [tariff, setTariff] = React.useState(null)
-  const [tariff2, setTariff2] = React.useState(null)
-  const [test, setTest] = React.useState('')
 
 
 
@@ -69,7 +64,7 @@ const EditOrder = () => {
       setOrder({ ...docSnap.data(), id: docSnap.id })
     }
     return () => getOrders()
-  }, [])
+  }, [id])
 
   React.useEffect(() => {
     const settingTariff = onSnapshot(tariffRef, snapshot => {
@@ -80,6 +75,19 @@ const EditOrder = () => {
     return () => settingTariff()
   }, [])
 
+  // React.useEffect(() => {
+
+  //   const gettingDist = async () => {
+  //     const id2 = await order?.addressFrom.city
+  //     console.log(id2)
+  //     const filteredDist = query(villageRef, where('district', '==', id2))
+  //     await getDocs(filteredDist)
+  //       .then(res => setDistrict(res?.docs?.map((doc) => ({ ...doc?.data() }))))
+  //   }
+  //   return () => gettingDist()
+
+  // }, [])
+
   React.useEffect(() => {
     const settingCity = onSnapshot(citiesRef, snapshot => {
       setCity(snapshot.docs.map(doc => ({ ...doc.data(), })))
@@ -87,31 +95,6 @@ const EditOrder = () => {
     return () => settingCity()
   }, [])
 
-  React.useEffect(() => {
-
-    const id2 = Number(order?.addressFrom.city)
-    const gettingDist = () => {
-      const filteredDist = query(villageRef, where('district', '==', id2))
-      getDocs(filteredDist)
-        .then(res => setDistrict(res?.docs?.map((doc) => ({ ...doc?.data() }))))
-    }
-
-    return () => gettingDist()
-
-  }, [])
-
-  React.useEffect(() => {
-
-    const id = Number(order?.tariffId)
-    const gettingFilteredTariff = () => {
-      const filteredDist = query(tariffRef, where('order', '==', id))
-      getDocs(filteredDist)
-        .then(res => setTariff2(res?.docs?.map((doc) => ({ ...doc?.data() }))))
-    }
-
-    return () => gettingFilteredTariff()
-
-  }, [])
 
 
   const getDist = async (city) => {
@@ -133,14 +116,10 @@ const EditOrder = () => {
       .then(res => setDistrict2(res?.docs?.map((doc) => ({ ...doc?.data() }))))
   }
 
-  const handleChangeTariff = (tariff) => {
-    setTest(tariff.target.value)
-  }
-
   const handleEditOrder = async (editOrder) => {
+    setOpen(!open)
     try {
-      setOpen(!open)
-      const orderRef = updateDoc(doc(db, 'orders', `${id}`),
+      await updateDoc(doc(db, 'orders', `${id}`),
         {
           addressFrom: {
             address: editOrder.fromAdress,
@@ -171,14 +150,14 @@ const EditOrder = () => {
             lon: 74.604228
           },
           tariff: {
-            cost: !Number(test.split(',')[1]) ? order?.tariff.cost : Number(test.split(',')[1]),
-            name: !test.split(',')[0] ? order?.tariff.name : test.split(',')[0],
-            uid: !test.split(',')[2] ? order?.tariff.uid : test.split(',')[2],
+            cost: !editOrder.tariff.cost ? order.tariff.cost : editOrder.tariff.cost,
+            name: !editOrder.tariff.name ? order.tariff.name : editOrder.tariff.name,
+            uid: !editOrder.tariff.order ? order.tariff.uid : String(editOrder.tariff.order),
           },
-          tariffId: !test.split(',')[2] ? order?.tariffId : test.split(',')[2],
+          tariffId: !editOrder.tariff.order ? order.tariff.uid : String(editOrder.tariff.order),
           cancellationReason: "",
           comments: editOrder.commits,
-          cost: Number(editOrder.cost),
+          cost: !editOrder.cost ? editOrder.tariff.cost : Number(editOrder.cost),
           cityFilter: !cityId.id ? order?.addressFrom.city : cityId.id,
           cityFrom: !cityId.id ? order?.addressFrom.city : cityId.id,
           cityTo: !cityId2.id ? order?.addressTo.city : cityId2.id,
@@ -186,9 +165,7 @@ const EditOrder = () => {
           courierTwo: "",
           packageType: editOrder.packageType,
           paymentMethod: editOrder.payment,
-          paymentStatus: !editOrder.paymentStatus
-            ? order.paymentStatus
-            : editOrder.paymentStatus == "false" ? false : true,
+          paymentStatus: editOrder.paymentStatus === "false" ? false : true,
           receiver: editOrder.toPhone,
           receiverName: editOrder.toName,
           receiverPhone: editOrder.toPhone,
@@ -199,71 +176,24 @@ const EditOrder = () => {
           whoPays: Number(editOrder.paymentPerson),
         }
       )
+      setOpen(false)
+      setTimeout(async () => {
+        alert('Заказ успешно отредактирован, нажмите на "ok" чтобы перейти к заказам')
+        if (alert) {
+          navigate('/orders')
+        }
+      }, 1000)
+      reset()
     } catch (e) {
       console.log(e.message)
-    } finally {
-      reset()
-      setOpen(false)
     }
-    console.log(
-      {
-        addressFrom: {
-          address: editOrder.fromAdress,
-          city: !cityId.id ? order?.addressFrom?.city : cityId.id,
-          cityName: !cityId.name
-            ? order?.addressFrom?.cityName
-            : cityId.cityName,
-          district: !editOrder.fromDistrict
-            ? order.addressFrom.district
-            : Number(editOrder.fromDistrict.split(',')[0]),
-          districtName: !editOrder.fromDistrict
-            ? order.addressFrom.districtName
-            : editOrder.fromDistrict.split(',')[1],
-          lat: 42.876254,
-          lon: 74.604228
-        },
-        addressTo: {
-          address: editOrder.toAdress,
-          city: !cityId2.id ? order?.addressTo.city : cityId2.id,
-          cityName: !cityId2.name ? order.addressTo.cityName : cityId2.cityName,
-          district: !editOrder.toDistrict
-            ? order.addressTo.district
-            : Number(editOrder.toDistrict.split(',')[0]),
-          districtName: !editOrder.toDistrict
-            ? order.addressTo.districtName
-            : editOrder.toDistrict.split(',')[1],
-          lat: 42.876254,
-          lon: 74.604228
-        },
-        tariff: {
-          cost: !Number(test.split(',')[1]) ? order?.tariff.cost : Number(test.split(',')[1]),
-          name: !test.split(',')[0] ? order?.tariff.name : test.split(',')[0],
-          uid: !test.split(',')[2] ? order?.tariff.uid : test.split(',')[2],
-        },
-        tariffId: !test.split(',')[2] ? order?.tariffId : test.split(',')[2],
-        cancellationReason: "",
-        comments: editOrder.commits,
-        cost: Number(editOrder.cost),
-        cityFilter: !cityId.id ? order?.addressFrom.city : cityId.id,
-        cityFrom: !cityId.id ? order?.addressFrom.city : cityId.id,
-        cityTo: !cityId2.id ? order?.addressTo.city : cityId2.id,
-        courierOne: "",
-        courierTwo: "",
-        packageType: editOrder.packageType,
-        paymentMethod: editOrder.payment,
-        paymentStatus: editOrder.paymentStatus == "false" ? false : true,
-        receiver: editOrder.toPhone,
-        receiverName: editOrder.toName,
-        receiverPhone: editOrder.toPhone,
-        redemption: Number(editOrder.redemption),
-        sender: editOrder.fromPhone,
-        senderName: editOrder.fromName,
-        senderPhone: editOrder.fromPhone,
-        whoPays: Number(editOrder.paymentPerson),
-      }
-    )
+
   }
-  console.log(tariff2)
+
+
+  console.log(order)
+
+
 
   return (
     <>
@@ -316,10 +246,8 @@ const EditOrder = () => {
                         id="filled-select-currency"
                         select
                         label={`Город/${order?.addressFrom.cityName}`}
-                        helperText="Выберите город"
                         variant="outlined"
                         size="small"
-                        defaultValue={order?.addressFrom?.cityName}
                         onChange={getDist}
                       >
                         {
@@ -334,24 +262,24 @@ const EditOrder = () => {
                           ))
                         }
                       </TextField>
-                      <select
-                        id="fromDistrict"
-                        select
-                        variant="outlined"
-                        size='small'
-                        defaultValue={order?.fromAdress?.districtName}
-                        {...register('fromDistrict')}
-                      >
+                      <select className='district-select' {...register('fromDistrict')}>
                         {
-                          district?.map((city) => (
-                            <option
-                              key={city.id}
-                              name={city.name}
-                              value={[city.id, city.name]}
+                          !district
+                            ? <option
+                              value={[order?.addressFrom.district, order?.addressFrom.districtName]}
+                              selected
                             >
-                              {city.name}
+                              {order?.addressFrom.districtName}
                             </option>
-                          ))
+                            : district?.map((city) => (
+                              <option
+                                key={city.id}
+                                name={city.name}
+                                value={[city.id, city.name]}
+                              >
+                                {city.name}
+                              </option>
+                            ))
                         }
                       </select>
                       <TextField
@@ -411,8 +339,6 @@ const EditOrder = () => {
                         id="filled-select-currency2"
                         select
                         label={`Город/${order?.addressTo.cityName}`}
-                        defaultValue={[order?.addressTo?.cityName, order?.adressTo?.city]}
-                        helperText="Выберите город"
                         variant="outlined"
                         size="small"
                         error={errors?.toCity && true}
@@ -426,25 +352,21 @@ const EditOrder = () => {
                           ))
                         }
                       </TextField>
-                      <select
-                        id="outlined-basic"
-                        select
-                        label="Село/микрорайон"
-                        variant="outlined"
-                        placeholder='Введите село/микрорайон'
-                        // defaultValue={district2 && district2[0]?.name}
-                        size="small"
-                        defaultValue={''}
-                        disabled={!cityId2 ? true : false}
-                        {...register('toDistrict')
-                        }
-                      >
+                      <select className='district-select' {...register('toDistrict')}>
+
                         {
-                          district2?.map((city) => (
-                            <option key={city.id} value={[city.id, city.name]}>
-                              {city.name}
+                          !district2
+                            ? <option
+                              value={[order?.addressTo.district, order?.addressTo.districtName]}
+                              selected
+                            >
+                              {order?.addressTo.districtName}
                             </option>
-                          ))
+                            : district2?.map((city) => (
+                              <option key={city.id} value={[city.id, city.name]}>
+                                {city.name}
+                              </option>
+                            ))
                         }
                       </select>
                       <TextField
@@ -491,30 +413,31 @@ const EditOrder = () => {
                             </MenuItem>
                           ))}
                         </TextField>
-                        <select
+                        <TextField
                           sx={{ width: '90%' }}
                           id="filled-select-currency"
                           select
-                          label="Выберите тариф"
-                          defaultValue={order?.tariff.uid}
+                          label={`${order.tariff?.name} (${order.tariff.cost}С̲)`}
+                          placeholder='fqwfqfw'
+                          defaultValue={""}
                           variant="outlined"
                           size="small"
-                          onChange={handleChangeTariff}
+                          {...register('tariff')}
                         >
                           {
                             tariff?.map((type) => (
-                              <option key={type.order} value={[type.name, type.cost, type.order]}>
+                              <MenuItem key={type.order} value={type}>
                                 {type.name} ({type.cost}С̲)
-                              </option>
+                              </MenuItem>
                             ))
                           }
-                        </select>
+                        </TextField>
                       </Box>
-                      <input
-                        defaultValue={order?.cost}
+                      <TextField
                         type="text"
-                        value={test.split(',')[1]}
-                        // type="number"
+                        size='small'
+                        label="Введите цену"
+                        defaultValue={order.cost}
                         {...register('cost')}
                       />
                       <TextField
@@ -535,7 +458,7 @@ const EditOrder = () => {
                         select
                         label="Выберите кто оплачивает"
                         defaultValue={
-                          order?.whoPays == '1' ? paymentPerson[0].value : paymentPerson[1].value
+                          order?.whoPays === 1 ? paymentPerson[0].value : paymentPerson[1].value
                         }
                         variant="outlined"
                         size="small"
@@ -557,12 +480,12 @@ const EditOrder = () => {
                         variant="outlined"
                         size="small"
                         defaultValue={
-                          order?.paymentMethod == 'cash' && payment[0].value
-                          || order?.paymentMethod == 'mbank' && payment[1].value
-                          || order?.paymentMethod == 'optima' && payment[2].value
-                          || order?.paymentMethod == 'elsom' && payment[3].value
-                          || order?.paymentMethod == 'odengi' && payment[4].value
-                          || order?.paymentMethod == 'other' && payment[5].value
+                          order?.paymentMethod === 'cash' && payment[0].value
+                          || order?.paymentMethod === 'mbank' && payment[1].value
+                          || order?.paymentMethod === 'optima' && payment[2].value
+                          || order?.paymentMethod === 'elsom' && payment[3].value
+                          || order?.paymentMethod === 'odengi' && payment[4].value
+                          || order?.paymentMethod === 'other' && payment[5].value
                         }
                         {...register('payment', {
                           required: FormValidation.RequiredInput.required,
@@ -579,7 +502,7 @@ const EditOrder = () => {
                         id="filled-select-currency"
                         select
                         label="Выберите стуст оплаты"
-                        defaultValue={order.paymentStatus == false ? false : true}
+                        defaultValue={`${order.paymentStatus}`}
                         variant="outlined"
                         size="small"
                         {...register('paymentStatus', {

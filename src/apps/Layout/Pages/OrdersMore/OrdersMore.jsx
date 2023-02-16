@@ -283,9 +283,9 @@ const OrdersMore = () => {
                       </span>
                     </li>
                     <Divider />
-                    <li><span>Выкуп</span><span>{order?.redemption}⃀</span></li>
+                    <li><span>Выкуп</span><span>{order?.redemption}С̲</span></li>
                     <Divider />
-                    <li><span>Сумма</span><span>{order?.cost}⃀</span></li>
+                    <li><span>Сумма</span><span>{order?.cost}С̲</span></li>
                     <Divider />
                     <li className='order-more-list-comments'>
                       <span>Коментарии</span>
