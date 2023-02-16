@@ -128,10 +128,10 @@ const EditOrder = () => {
               ? order?.addressFrom?.cityName
               : cityId.name,
             district: !editOrder.fromDistrict
-              ? order.addressFrom.district
+              ? order?.addressFrom.district
               : Number(editOrder.fromDistrict.split(',')[0]),
             districtName: !editOrder.fromDistrict
-              ? order.addressFrom.districtName
+              ? order?.addressFrom.districtName
               : editOrder.fromDistrict.split(',')[1],
             lat: 42.876254,
             lon: 74.604228
@@ -141,10 +141,10 @@ const EditOrder = () => {
             city: !cityId2.id ? order?.addressTo.city : cityId2.id,
             cityName: !cityId2.name ? order.addressTo.cityName : cityId2.name,
             district: !editOrder.toDistrict
-              ? order.addressTo.district
+              ? order?.addressTo.district
               : Number(editOrder.toDistrict.split(',')[0]),
             districtName: !editOrder.toDistrict
-              ? order.addressTo.districtName
+              ? order?.addressTo.districtName
               : editOrder.toDistrict.split(',')[1],
             lat: 42.876254,
             lon: 74.604228
@@ -189,10 +189,6 @@ const EditOrder = () => {
     }
 
   }
-
-
-  console.log(order)
-
 
 
   return (
@@ -502,7 +498,7 @@ const EditOrder = () => {
                         id="filled-select-currency"
                         select
                         label="Выберите стуст оплаты"
-                        defaultValue={`${order.paymentStatus}`}
+                        defaultValue={`${order?.paymentStatus}`}
                         variant="outlined"
                         size="small"
                         {...register('paymentStatus', {
