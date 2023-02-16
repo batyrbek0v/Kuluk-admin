@@ -64,7 +64,7 @@ const EditOrder = () => {
       setOrder({ ...docSnap.data(), id: docSnap.id })
     }
     return () => getOrders()
-  }, [id])
+  }, [])
 
   React.useEffect(() => {
     const settingTariff = onSnapshot(tariffRef, snapshot => {
@@ -190,7 +190,6 @@ const EditOrder = () => {
 
   }
 
-  if (!order) return <Loader />
 
   return (
     <>
