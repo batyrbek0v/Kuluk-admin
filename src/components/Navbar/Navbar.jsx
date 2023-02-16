@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { sideList } from '../Utils/index';
 import { NavLink } from 'react-router-dom';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { handleSignOut } from '../../configs/index';
 import { Collapse, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { FiShoppingCart, FiUsers, FiLogIn } from 'react-icons/fi'
@@ -9,7 +8,6 @@ import { MdKeyboardArrowRight, MdOutlineExpandMore } from 'react-icons/md'
 import './Navbar.scss'
 
 export default function Navbar() {
-  const [show, setShow] = React.useState(false)
   const [open, setOpen] = React.useState(true);
   const [open2, setOpen2] = React.useState(true);
 

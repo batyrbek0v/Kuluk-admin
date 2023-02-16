@@ -437,7 +437,7 @@ const EditOrder = () => {
                         type="text"
                         size='small'
                         label="Введите цену"
-                        defaultValue={order.cost}
+                        defaultValue={order?.cost}
                         {...register('cost')}
                       />
                       <TextField

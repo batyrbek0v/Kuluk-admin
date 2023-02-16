@@ -1,10 +1,9 @@
 import React from 'react'
 import { courierTableList } from '../Utils'
-import { collection, doc, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from '../../configs';
 import { DataGrid } from '@mui/x-data-grid';
 import { Loader } from '../Loader/Loader';
-import { FiRefreshCcw } from 'react-icons/fi';
 import '../Card/Card.scss'
 
 
