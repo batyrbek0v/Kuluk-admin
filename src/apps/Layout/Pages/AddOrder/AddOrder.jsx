@@ -162,56 +162,56 @@ const AddOrder = () => {
       setOpen(false)
       console.log(e.message)
     }
-    console.log(
-      {
-        addressFrom: {
-          address: order.fromAdress,
-          city: cityId.id,
-          cityName: cityId.name,
-          district: !order.fromDistrict ? '' : Number(order.fromDistrict.split(',')[0]),
-          districtName: !order.fromDistrict ? '' : order.fromDistrict.split(',')[1],
-          lat: 42.876254,
-          lon: 74.604228
-        },
-        addressTo: {
-          address: order.toAdress,
-          city: cityId2.id,
-          cityName: cityId2.name,
-          district: !order.toDistrict ? '' : Number(order.toDistrict.split(',')[0]),
-          districtName: !order.toDistrict ? '' : order.toDistrict.split(',')[1],
-          lat: 42.876254,
-          lon: 74.604228
-        },
-        tariff: {
-          cost: order.tariff.cost,
-          name: order.tariff.name,
-          uid: String(order.tariff.order),
-        },
-        tariffId: String(order.tariff.order),
-        cancellationReason: "",
-        comments: order.commits,
-        cost: !order.cost ? order.tariff.cost : Number(order.cost),
-        cityFilter: cityId.id,
-        cityFrom: cityId.id,
-        cityTo: cityId2.id,
-        courierOne: "",
-        courierTwo: "",
-        dateCreated: date,
-        packageType: order.orderType,
-        paymentMethod: order.payment,
-        paymentStatus: order.paymentStatus == 'false' ? false : true,
-        receiver: order.toPhone,
-        receiverName: order.toName,
-        receiverPhone: order.toPhone,
-        redemption: Number(order.redemption),
-        sender: order.fromPhone,
-        senderName: order.fromName,
-        senderPhone: order.fromPhone,
-        status: "status_new",
-        statusFilter: ["status_new"],
-        whoPays: Number(order.paymentPerson),
-      }
-    )
+    // console.log(
+    //   {
+    //     addressFrom: {
+    //       address: order.fromAdress,
+    //       city: cityId.id,
+    //       cityName: cityId.name,
+    //       district: !order.fromDistrict ? '' : Number(order.fromDistrict.split(',')[0]),
+    //       districtName: !order.fromDistrict ? '' : order.fromDistrict.split(',')[1],
+    //       lat: 42.876254,
+    //       lon: 74.604228
+    //     },
+    //     addressTo: {
+    //       address: order.toAdress,
+    //       city: cityId2.id,
+    //       cityName: cityId2.name,
+    //       district: !order.toDistrict ? '' : Number(order.toDistrict.split(',')[0]),
+    //       districtName: !order.toDistrict ? '' : order.toDistrict.split(',')[1],
+    //       lat: 42.876254,
+    //       lon: 74.604228
+    //     },
+    //     tariff: {
+    //       cost: order.tariff.cost,
+    //       name: order.tariff.name,
+    //       uid: String(order.tariff.order),
+    //     },
+    //     tariffId: String(order.tariff.order),
+    //     cancellationReason: "",
+    //     comments: order.commits,
+    //     cost: !order.cost ? order.tariff.cost : Number(order.cost),
+    //     cityFilter: cityId.id,
+    //     cityFrom: cityId.id,
+    //     cityTo: cityId2.id,
+    //     courierOne: "",
+    //     courierTwo: "",
+    //     dateCreated: date,
+    //     packageType: order.orderType,
+    //     paymentMethod: order.payment,
+    //     paymentStatus: order.paymentStatus == 'false' ? false : true,
+    //     receiver: order.toPhone,
+    //     receiverName: order.toName,
+    //     receiverPhone: order.toPhone,
+    //     redemption: Number(order.redemption),
+    //     sender: order.fromPhone,
+    //     senderName: order.fromName,
+    //     senderPhone: order.fromPhone,
+    //     status: "status_new",
+    //     statusFilter: ["status_new"],
+    //     whoPays: Number(order.paymentPerson),
+    //   }
+    // )
   }
 
 

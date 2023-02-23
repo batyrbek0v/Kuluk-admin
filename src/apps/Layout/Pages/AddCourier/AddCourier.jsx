@@ -1,23 +1,24 @@
 import React from 'react'
+import { db } from '../../../../configs';
 import { Title } from './../../../../components/Title/Title';
-import { MenuItem, TextField, Button } from '@mui/material';
+import { Loader } from './../../../../components/Loader/Loader';
+import { useForm } from 'react-hook-form';
+import { citiesRef } from '../../../../components/Utils/fireStoreRef';
+import { FaUserPlus } from 'react-icons/fa'
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { courierType } from '../../../../components/Utils';
 import { FormValidation } from '../../../../components/Form/FormValidation/exports';
-import { citiesRef } from '../../../../components/Utils/fireStoreRef';
-import { useForm } from 'react-hook-form';
-import { FaUserPlus } from 'react-icons/fa'
-import { db } from '../../../../configs';
-import { Loader } from './../../../../components/Loader/Loader';
-import './AddCourier.css'
-import {
-  doc,
-  setDoc,
-  getDocs,
-} from "firebase/firestore";
+import { doc, setDoc, getDocs, } from "firebase/firestore";
+import { MenuItem, TextField, Button, Box, Backdrop, CircularProgress, } from '@mui/material';
+import './AddCourier.scss'
+import { Header } from './../../../../components/Header/Header';
+import { useNavigate } from 'react-router-dom';
 
 const AddCourier = () => {
 
   const [city, setCity] = React.useState(null)
+  const [open, setOpen] = React.useState(false)
+  const navigate = useNavigate()
 
   const {
     register,
@@ -27,12 +28,22 @@ const AddCourier = () => {
   } = useForm()
 
   const handleAddCourirer = async (data) => {
+    setOpen(!open)
     try {
-      const docRef = await setDoc(doc(db, "couriers", `${data.number}`), {
+      const docRef = await setDoc(doc(db, "couriers", `${data.phone}`), {
         ...data,
         active: false,
         online: false,
       })
+      setOpen(false)
+      setTimeout(async () => {
+        alert('Курьер успешно добавлен, нажмите на "ok" чтобы перейти к курьерам')
+        if (alert) {
+          navigate('/couriers')
+        }
+      }, 1000)
+      reset()
+
     } catch (e) {
       console.error("Error adding document: ", e);
     } finally {
@@ -55,87 +66,134 @@ const AddCourier = () => {
   return (
     <>
       <div className='container'>
-        <Title title={'Добавление курьера'} />
+        <Header previous="Статистика" initial="Добавить курьера" />
+        <Title title={'Добавление курьера'} icon={<AiOutlinePlusCircle />} />
         <div className="container-inner">
           {
-            !city ? <Loader />
+            !city
+              ? <Loader />
               : (
-                <div className='addCourier-inner'>
-                  <form>
-                    <TextField
-                      id="filled-textarea"
-                      label="Имя"
-                      placeholder="Иван"
-                      multiline
-                      variant="filled"
-                      size="small"
-                      name='Name'
-                      helperText={errors?.name?.message}
-                      error={errors?.name && true}
-                      {...register('name',
-                        {
-                          required: FormValidation.RequiredInput.required
-                        })
-                      }
-                    />
-                    <TextField
-                      id="filled-textarea"
-                      label="Фамилия"
-                      placeholder="Иванов"
-                      multiline
-                      variant="filled"
-                      size="small"
-                      name='SurName'
-                      helperText={errors?.surName?.message}
-                      error={errors?.surName && true}
+                <div className="addCourier-wrapper">
+                  <div className='order-block-head'>
+                    <h3>добавление курьера</h3>
+                  </div>
+                  <form className='add-courier-form'>
+                    <Box sx={{ display: 'flex', gap: '4px' }}>
+                      <TextField
+                        id="filled-textarea"
+                        label="Имя"
+                        placeholder="Иван"
+                        multiline
+                        variant="outlined"
+                        size="small"
+                        name='Name'
+                        helperText={errors?.name?.message}
+                        className="add-courier-input"
+                        error={errors?.name && true}
+                        {...register('name',
+                          {
+                            required: FormValidation.RequiredInput.required
+                          })
+                        }
+                      />
+                      <TextField
+                        id="filled-textarea"
+                        label="Фамилия"
+                        placeholder="Иванов"
+                        multiline
+                        variant="outlined"
+                        size="small"
+                        name='SurName'
+                        helperText={errors?.surName?.message}
+                        className="add-courier-input"
 
-                      {...register('surName',
-                        {
-                          required: FormValidation.RequiredInput.required,
+                        error={errors?.surName && true}
 
-                        })
-                      }
-                    />
-                    <TextField
-                      id="filled-textarea"
-                      label="ПИН"
-                      placeholder="0101"
-                      variant="filled"
-                      size="small"
-                      name='PIN'
-                      helperText={errors?.PIN?.message}
-                      error={errors?.PIN && true}
-                      multiline
-                      {...register('pin',
-                        {
-                          required: FormValidation.RequiredInput.required,
-                          maxLength: FormValidation.maxLengthValidation
-                        })
-                      }
-                    />
-                    <TextField
-                      id="filled-textarea"
-                      label="Моб-номер"
-                      placeholder="0700-77-77-77"
-                      multiline
-                      variant="filled"
-                      size="small"
-                      name='LastName'
-                      helperText={errors?.phone?.message}
-                      error={errors?.phone && true}
-                      {...register('phone',
-                        {
-                          required: FormValidation.RequiredInput.required
-                        })
-                      }
-                    />
-
+                        {...register('surName',
+                          {
+                            required: FormValidation.RequiredInput.required,
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: '4px' }}>
+                      <TextField
+                        id="filled-textarea"
+                        label="ПИН"
+                        placeholder="0101"
+                        variant="outlined"
+                        size="small"
+                        name='PIN'
+                        className="add-courier-input"
+                        helperText={errors?.PIN?.message}
+                        error={errors?.PIN && true}
+                        multiline
+                        {...register('pin',
+                          {
+                            required: FormValidation.RequiredInput.required,
+                            maxLength: FormValidation.maxLengthValidation
+                          })
+                        }
+                      />
+                      <TextField
+                        id="filled-textarea"
+                        label="Моб-номер"
+                        placeholder="0700-77-77-77"
+                        multiline
+                        variant="outlined"
+                        size="small"
+                        name='LastName'
+                        className="add-courier-input"
+                        helperText={errors?.phone?.message}
+                        error={errors?.phone && true}
+                        {...register('phone',
+                          {
+                            required: FormValidation.RequiredInput.required
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: '4px' }}>
+                      <TextField
+                        id="filled-select-currency"
+                        select
+                        label="Тип курьера"
+                        defaultValue=""
+                        variant="outlined"
+                        className="add-courier-input"
+                        size="small"
+                        {...register('type')}
+                      >
+                        {courierType.map((type) => (
+                          <MenuItem key={type.title} value={type.title}>
+                            {type.title}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      <TextField
+                        id="filled-select-currency"
+                        select
+                        label="Город/район"
+                        defaultValue={''}
+                        variant="outlined"
+                        className="add-courier-input"
+                        size="small"
+                        name='city'
+                        {...register('city')}
+                      >
+                        {city?.sort().map((type) => (
+                          <MenuItem key={type.id} value={type}>
+                            {type.name}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </Box>
                     <TextField
                       id="filled-textarea"
                       label="Рейтинг"
                       placeholder="5.0"
                       multiline
-                      variant="filled"
+                      variant="outlined"
                       size="small"
                       name='raiting'
                       helperText={errors?.rating?.message}
@@ -146,56 +204,27 @@ const AddCourier = () => {
                         })
                       }
                     />
-                    <TextField
-                      sx={{ width: '200px' }}
-                      id="filled-select-currency"
-                      select
-                      label="Тип курьера"
-                      defaultValue="Пеший"
-                      helperText="Выберите тип курьера"
-                      variant="filled"
-                      size="small"
-                      {...register('type')}
-                    >
-                      {courierType.map((type) => (
-                        <MenuItem key={type.title} value={type.title}>
-                          {type.title}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                    <TextField
-                      sx={{ width: '200px' }}
-                      id="filled-select-currency"
-                      select
-                      label="Город/район"
-                      // defaultValue={city[0].name}
-                      defaultValue={''}
-                      helperText="Выберите город курьера"
-                      variant="filled"
-                      size="small"
-                      name='city'
-                      {...register('city')}
-                    >
-                      {city?.sort().map((type) => (
-                        <MenuItem key={type.id} value={type.name}>
-                          {type.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
                   </form>
                   <Button
-                    variant="contained"
-                    type='submit'
-                    className='form-button'
                     onClick={handleSubmit(data => handleAddCourirer(data))}
+                    size='large'
+                    fullWidth
+                    variant='contained'
+                    style={{ background: 'coral' }}
+                    sx={{ marginTop: "10px" }}
                   >
-                    Добавить
-                    <FaUserPlus />
+                    Создать курьера
                   </Button>
                 </div>
               )
           }
         </div>
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={open}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
     </>
   )

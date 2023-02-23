@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteDoc, doc, getDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { AiFillCloseCircle, AiFillCheckCircle } from 'react-icons/ai';
 import { BiDetail, BiPackage } from 'react-icons/bi';
 import { CgFileDocument } from 'react-icons/cg'
@@ -24,12 +24,16 @@ import {
   DialogTitle,
   DialogActions
 } from '@mui/material';
+import { couriersRef } from '../../../../components/Utils/fireStoreRef';
 
 const OrdersMore = () => {
 
   const [order, setOrder] = React.useState(null)
+  const [courierOne, setCourierOne] = React.useState(null)
+  const [courierTwo, setCourierTwo] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [deleting, setDeleting] = React.useState(false)
+  const dateTransform = new Date(+order?.dateCreated?.seconds * 1000)
 
   const { id } = useParams()
   const navigate = useNavigate()
@@ -42,10 +46,6 @@ const OrdersMore = () => {
     'Доставлен',
   ];
 
-  const dateTransform = new Date(+order?.dateCreated?.seconds * 1000)
-
-  console.log(+order?.dateCreated?.seconds * 1000)
-
   const time = {
     day: dateTransform?.getDate(),
     month: dateTransform?.getMonth(),
@@ -55,10 +55,38 @@ const OrdersMore = () => {
   }
 
   const getOrder = async () => {
-    const docRef = doc(db, 'orders', `${id}`)
+    const docRef = doc(db, 'orders', id)
     const docSnap = await getDoc(docRef)
     setOrder({ ...docSnap.data(), id: docSnap.id })
   }
+  React.useEffect(() => {
+
+    getOrder()
+  }, [])
+
+  React.useEffect(() => {
+    const getFirstCouirier = async () => {
+      if (order?.courierOne) {
+        const docRef = doc(db, 'couriers', order?.courierOne)
+        const docSnap = await getDoc(docRef)
+        setCourierOne({ ...docSnap.data() })
+      }
+    }
+
+    getFirstCouirier()
+  }, [order?.courierOne])
+
+  React.useEffect(() => {
+    const getSecondCouirier = async () => {
+      if (order?.courierTwo) {
+        const docRef = doc(db, 'couriers', order?.courierTwo)
+        const docSnap = await getDoc(docRef)
+        setCourierTwo({ ...docSnap.data() })
+      }
+    }
+
+    getSecondCouirier()
+  }, [order?.courierTwo])
 
   const deleteOrder = async (id) => {
     setOpen(!open);
@@ -74,14 +102,6 @@ const OrdersMore = () => {
         }
 
       }, 1000)
-
-      // if (message) {
-      // navigate('/orders')
-      // console.log('true')
-      // }
-      // if (message == true) {
-      //   navigate('/orders')
-      // }
 
     } catch (error) {
       alert(error.message)
@@ -99,11 +119,6 @@ const OrdersMore = () => {
   const handleClickClose = () => {
     setOpen(false);
   };
-
-
-  React.useEffect(() => {
-    getOrder()
-  }, [])
 
   console.log(order)
 
@@ -149,6 +164,48 @@ const OrdersMore = () => {
                     }
                   </Box>
                 </div>
+                {
+                  !courierOne
+                    ? ''
+                    : <div className={!deleting ? "orders-more-box address" : "orders-more-box deleting"}>
+                      <div className="orders-more-box-header">
+                        <h3>Курьер 1</h3>
+                      </div>
+                      <Divider />
+                      <ul className="orders-more-body-list">
+                        <li><span>Имя</span><span>{courierOne?.name} {courierOne?.surName}</span></li>
+                        <Divider />
+                        <li><span>Номер телефона</span><span>{courierOne?.phone}</span></li>
+                        <Divider />
+                        <li><span>Город</span><span>{courierOne?.city?.name}</span></li>
+                        <Divider />
+                        <li><span>Рейтинг</span><span>{courierOne?.raiting}</span></li>
+                        <Divider />
+                        <li><span>Тип курьера</span><span>{courierOne?.type}</span></li>
+                      </ul>
+                    </div>
+                }
+                {
+                  !courierTwo
+                    ? ''
+                    : <div className={!deleting ? "orders-more-box address" : "orders-more-box deleting"}>
+                      <div className="orders-more-box-header">
+                        <h3>Курьер 2</h3>
+                      </div>
+                      <Divider />
+                      <ul className="orders-more-body-list">
+                        <li><span>Имя</span><span>{courierTwo?.name} {courierTwo?.surName}</span></li>
+                        <Divider />
+                        <li><span>Номер телефона</span><span>{courierTwo?.phone}</span></li>
+                        <Divider />
+                        <li><span>Город</span><span>{courierTwo?.city?.name}</span></li>
+                        <Divider />
+                        <li><span>Рейтинг</span><span>{courierTwo?.raiting}</span></li>
+                        <Divider />
+                        <li><span>Тип курьера</span><span>{courierTwo?.type}</span></li>
+                      </ul>
+                    </div>
+                }
                 <div className={!deleting ? "orders-more-box address" : "orders-more-box deleting"}>
                   <div className="orders-more-box-header">
                     <h3>Отправитель</h3>
