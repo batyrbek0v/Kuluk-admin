@@ -15,97 +15,72 @@
     width: 150px;
     border-radius: 12px;
 
-    &.new-order {
+    &.status_order {
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      color: #0275d8;
-      color: #0e7090;
-      background-color: lightblue;
+    }
 
+    &.new-order {
+      color: #0ece91;
+      background-color: #09f7a01f;
     }
 
     &.confirmed-order {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: #0275d8;
       color: #850e90;
       background-color: #eadaff;
-
     }
 
     &.arrived-sender-order {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: #0275d8;
       color: #725c12;
       background-color: #f4ffda;
     }
+    &.arrived-receiver-order {
+      color: #301272;
+      background-color: #e2daff;
+    }
 
     &.cancelled-order {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: #d9534f;
       color: #b42318;
       background-color: #f044381f;
 
     }
 
     &.on-courier-order {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #f0ad4e;
       color: #ce540e;
       background-color: #f790091f;
-      font-weight: bold;
+
+    }
+
+    &.on-way {
+      color: #2284a5;
+      background-color: lightblue;
 
     }
 
     &.delivered-order {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #66bb6a;
       color: #0b815a;
       background-color: #10b9811f;
-      font-weight: bold;
+    }
+    &.rejected-order {
+      color: #810b0b;
+      background-color: #b910135d;
     }
 
     &.at-sorting-order {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       color: #96883d;
       background-color: #a4a7171f;
-      font-weight: bold;
     }
 
     &.paid {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #66bb6a;
       color: #0b815a;
       background-color: #10b9811f;
-      font-weight: bold;
     }
 
     &.not-paid {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: coral;
-      color: #b42318;
+      color: #de3427;
       background-color: #f044381f;
-      font-weight: bold;
     }
 
     &:nth-child(2) {

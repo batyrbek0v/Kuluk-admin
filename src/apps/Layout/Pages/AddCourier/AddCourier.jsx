@@ -2,17 +2,23 @@ import React from 'react'
 import { db } from '../../../../configs';
 import { Title } from './../../../../components/Title/Title';
 import { Loader } from './../../../../components/Loader/Loader';
+import { Header } from './../../../../components/Header/Header';
 import { useForm } from 'react-hook-form';
 import { citiesRef } from '../../../../components/Utils/fireStoreRef';
-import { FaUserPlus } from 'react-icons/fa'
-import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { courierType } from '../../../../components/Utils';
-import { FormValidation } from '../../../../components/Form/FormValidation/exports';
-import { doc, setDoc, getDocs, } from "firebase/firestore";
-import { MenuItem, TextField, Button, Box, Backdrop, CircularProgress, } from '@mui/material';
-import './AddCourier.scss'
-import { Header } from './../../../../components/Header/Header';
 import { useNavigate } from 'react-router-dom';
+import { FormValidation } from '../../../../components/Form/FormValidation/exports';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
+import { doc, setDoc, getDocs, } from "firebase/firestore";
+import './AddCourier.scss'
+import {
+  MenuItem,
+  TextField,
+  Button,
+  Box,
+  Backdrop,
+  CircularProgress
+} from '@mui/material';
 
 const AddCourier = () => {
 
@@ -32,6 +38,7 @@ const AddCourier = () => {
     try {
       const docRef = await setDoc(doc(db, "couriers", `${data.phone}`), {
         ...data,
+        cityId: data.city.id,
         active: false,
         online: false,
       })

@@ -25,6 +25,7 @@ import {
   DialogActions
 } from '@mui/material';
 import { couriersRef } from '../../../../components/Utils/fireStoreRef';
+import { orderStatus } from '../../../../components/Utils';
 
 const OrdersMore = () => {
 
@@ -120,7 +121,7 @@ const OrdersMore = () => {
     setOpen(false);
   };
 
-  console.log(order)
+  console.log(order?.status)
 
   return (
     <>
@@ -144,20 +145,25 @@ const OrdersMore = () => {
                         ? <Stepper activeStep={0} alternativeLabel>
                           <Step>
                             <StepLabel color='error'>Заказ отменен</StepLabel>
-                          </Step>title
+                          </Step>
                         </Stepper>
                         : <Stepper activeStep={
-                          order?.status == 'status_new' ? 0 : ''
-                            || order?.status == 'status_confirmed' && 1
-                            || order?.status == 'status_on_courier' && 2
-                            || order?.status == 'status_at_sorting_center' && 3
-                            || order?.status == 'status_delivered' && 5
+                          order?.status === 'status_new' ? 0 : ''
+                            || order?.status === 'status_confirmed' && 1
+                            || order?.status === 'status_arrived_sender' && 2
+                            || order?.status === 'status_on_courier' && 3
+                            || order?.status === 'status_at_sorting_center' && 4
+                            || order?.status === 'status_on_way_cc' && 5
+                            || order?.status === 'status_at_sorting_center2' && 6
+                            || order?.status === 'status_on_courier2' && 7
+                            || order?.status === 'status_arrived_receiver' && 8
+                            || order?.status === 'status_delivered' && 10
                         }
                           alternativeLabel
                         >
-                          {steps.map((label) => (
-                            <Step key={label}>
-                              <StepLabel>{label}</StepLabel>
+                          {orderStatus.slice(0, 10).map((label) => (
+                            <Step key={label.name}>
+                              <StepLabel sx={{ fontSize: "12px" }}>{label.name}</StepLabel>
                             </Step>
                           ))}
                         </Stepper>

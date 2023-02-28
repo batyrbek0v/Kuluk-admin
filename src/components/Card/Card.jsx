@@ -3,16 +3,27 @@ import { useNavigate } from 'react-router-dom'
 import { MdDeleteOutline } from 'react-icons/md';
 import { FiEdit, FiMoreHorizontal } from 'react-icons/fi'
 import { db } from '../../configs';
-import { deleteDoc, doc } from 'firebase/firestore';
+import { orderStatus } from '../Utils';
 import './Card.scss'
+import {
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  collection
+} from 'firebase/firestore';
 import {
   Button,
   Dialog,
   DialogActions,
+  DialogContent,
+  DialogContentText,
   DialogTitle,
+  FormControl,
   IconButton,
   Menu,
-  MenuItem
+  MenuItem,
+  TextField
 } from '@mui/material';
 
 const Card = ({
@@ -31,7 +42,8 @@ const Card = ({
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [deleting, setDeleting] = React.useState(false)
   const [open, setOpen] = React.useState(false);
-
+  const [statusPopUp, setStatusPopUp] = React.useState(false)
+  const [statusValue, setStatusValue] = React.useState('')
 
   const time = {
     day: dateTransform?.getDate(),
@@ -73,6 +85,31 @@ const Card = ({
     setOpen(false);
   };
 
+  const handleOpenStatusPopUp = () => {
+    setStatusPopUp(true)
+  }
+  const handleCloseStatusPopUp = () => {
+    setStatusPopUp(false)
+  }
+
+  const handleChangeStatus = async () => {
+    try {
+      setStatusPopUp(false)
+      await updateDoc(doc(db, 'orders', id),
+        {
+          status: statusValue,
+          statusFilter: [statusValue],
+        }
+      )
+
+      await addDoc(collection(db, 'orders', id, 'history'), {
+        date: new Date,
+        description: `Админ изменил статус на ${statusValue}`
+      })
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
 
   return (
     <>
@@ -92,16 +129,23 @@ const Card = ({
             {time.minutes}
           </time>
         </div>
-        <div className={
-          status === 'status_new' ? 'orders-card-values new-order' : ''
-            || status === 'status_confirmed' ? 'orders-card-values confirmed-order' : ''
-              || status === 'status_arrived_sender' ? 'orders-card-values arrived-sender-order' : ''
-                || status === 'status_on_courier' ? 'orders-card-values on-courier-order' : ''
-                  || status === 'status_at_sorting_center' ? 'orders-card-values at-sorting-order' : ''
-                    || status === 'status_delivered' ? 'orders-card-values delivered-order' : ''
-                      || status === 'status_rejected' ? 'orders-card-values rejected-order' : ''
-                        || status === 'status_cancelled' ? 'orders-card-values cancelled-order' : ''
-        }
+        <div
+          onClick={handleOpenStatusPopUp}
+          className=
+          {
+            status === 'status_new' ? 'orders-card-values status_order new-order' : ''
+              || status === 'status_confirmed' ? 'orders-card-values status_order confirmed-order' : ''
+                || status === 'status_arrived_sender' ? 'orders-card-values status_order arrived-sender-order' : ''
+                  || status === 'status_on_courier' ? 'orders-card-values status_order on-courier-order' : ''
+                    || status === 'status_at_sorting_center' ? 'orders-card-values status_order at-sorting-order' : ''
+                      || status === 'status_on_way_cc' ? 'orders-card-values status_order on-way' : ''
+                        || status === 'status_at_sorting_center2' ? 'orders-card-values status_order at-sorting-order' : ''
+                          || status === 'status_on_courier2' ? 'orders-card-values status_order on-courier-order' : ''
+                            || status === 'status_arrived_receiver' ? 'orders-card-values status_order arrived-receiver-order' : ''
+                              || status === 'status_delivered' ? 'orders-card-values status_order delivered-order' : ''
+                                || status === 'status_rejected' ? 'orders-card-values status_order rejected-order' : ''
+                                  || status === 'status_cancelled' ? 'orders-card-values status_order cancelled-order' : ''
+          }
         >
           <p>
             {
@@ -110,6 +154,10 @@ const Card = ({
               || status === 'status_arrived_sender' && 'Прибыл к отправ'
               || status === 'status_on_courier' && 'У курьера'
               || status === 'status_at_sorting_center' && 'B сорт.центре'
+              || status === 'status_on_way_cc' && 'В пути'
+              || status === 'status_at_sorting_center2' && 'B сорт.центре(2)'
+              || status === 'status_on_courier2' && 'У курьера(2)'
+              || status === 'status_arrived_receiver' && 'Прибыл к получ'
               || status === 'status_delivered' && 'Доставлен'
               || status === 'status_rejected' && 'Отклонен'
               || status === 'status_cancelled' && 'Отменен'
@@ -146,7 +194,7 @@ const Card = ({
           </p>
         </div>
         <div className={
-          !paymentStatus ? 'orders-card-values not-paid' : 'orders-card-values paid'
+          !paymentStatus ? 'orders-card-values status_order not-paid' : 'orders-card-values status_order paid'
         }
         >
           <p>
@@ -191,6 +239,29 @@ const Card = ({
           </Menu>
         </div>
       </div>
+      <Dialog open={statusPopUp} onClose={handleCloseStatusPopUp}>
+        <DialogTitle>Нажмите на поле чтобы изменить статус заказа</DialogTitle>
+        <DialogContent>
+          <TextField
+            id="outlined-select-currency"
+            select
+            fullWidth
+            defaultValue={status}
+            size='small'
+            onChange={e => setStatusValue(e.target.value)}
+          >
+            {orderStatus.map((status) => (
+              <MenuItem key={status.name} value={status.value}>
+                {status.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseStatusPopUp}>Отменить</Button>
+          <Button onClick={handleChangeStatus}>Подтвердить</Button>
+        </DialogActions>
+      </Dialog>
       <Dialog
         open={open}
         onClose={handleClosePopUp}

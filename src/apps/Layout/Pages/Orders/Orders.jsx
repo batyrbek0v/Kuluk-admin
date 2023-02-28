@@ -206,7 +206,7 @@ const Orders = () => {
               >
                 <MenuItem value='Все'>Все</MenuItem>
                 {orderStatus.map((status) => (
-                  <MenuItem key={status.id} value={status.value}>
+                  <MenuItem key={status.name} value={status.value}>
                     {status.name}
                   </MenuItem>
                 ))}

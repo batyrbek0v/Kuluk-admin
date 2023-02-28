@@ -116,11 +116,16 @@ export const sortByCostList = [
 // ORDER-STATUS 
 
 export const orderStatus = [
-  { id: 1, name: 'Новые', value: 'status_new', },
-  { id: 2, name: 'Подтвержденные', value: 'status_confirmed', },
-  { id: 3, name: 'У курьера', value: 'status_on_courier', },
-  { id: 4, name: 'В сорт.центре', value: 'status_at_sorting_center', },
-  { id: 5, name: 'Доставленные', value: 'status_delivered', },
-  { id: 6, name: 'Отклоненные', value: 'status_rejected', },
-  { id: 7, name: 'Отмененные', value: 'status_cancelled', },
+  { name: 'Новый', value: 'status_new', },
+  { name: 'Подтвержден', value: 'status_confirmed', },
+  { name: 'Прибыл к отправителю', value: 'status_arrived_sender', },
+  { name: 'У курьера', value: 'status_on_courier', },
+  { name: 'В сорт.центре', value: 'status_at_sorting_center', },
+  { name: 'В пути', value: 'status_on_way_cc', },
+  { name: 'В сорт.центре2', value: 'status_at_sorting_center2', },
+  { name: 'У курьера2', value: 'status_on_courier2', },
+  { name: 'Прибыл к получателю', value: 'status_arrived_receiver', },
+  { name: 'Доставлен', value: 'status_delivered', },
+  { name: 'Отклонен', value: 'status_rejected', },
+  { name: 'Отменен', value: 'status_cancelled', },
 ]
