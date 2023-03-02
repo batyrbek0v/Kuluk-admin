@@ -1,40 +1,43 @@
 import React from 'react'
+import { FormValidation } from '../../../../components/Form/FormValidation/exports';
 import { citiesRef, tariffRef, villageRef } from '../../../../components/Utils/fireStoreRef';
-import { Title } from '../../../../components/Title/Title'
-import { useForm } from 'react-hook-form';
-import { FormValidation } from './../../../../components/Form/FormValidation/exports';
-import { db } from '../../../../configs';
 import { Loader } from '../../../../components/Loader/Loader';
+import { payment } from '../../../../components/Utils/index';
 import { Header } from '../../../../components/Header/Header';
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import { useNavigate } from 'react-router-dom';
-import './AddOrder.scss'
+import { Title } from '../../../../components/Title/Title';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { db } from '../../../../configs';
+import { FiEdit } from 'react-icons/fi';
+import { Button } from '@mui/material';
 import {
-  Button,
   TextField,
-  MenuItem,
   Box,
+  MenuItem,
   Backdrop,
-  CircularProgress,
-  Select
+  CircularProgress
 } from '@mui/material';
 import {
-  addDoc,
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where
-} from 'firebase/firestore';
-import {
-  orderTariff,
-  payment,
   paymentPerson,
   paymentStatus,
   typeOfOrder
 } from '../../../../components/Utils';
+import {
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  onSnapshot,
+  addDoc,
+  collection
+} from 'firebase/firestore';
 
-const AddOrder = () => {
+const EditOrder = () => {
+
+
+  const { id } = useParams()
 
   const {
     register,
@@ -43,23 +46,28 @@ const AddOrder = () => {
     formState: { errors }
   } = useForm()
 
-  const date = new Date()
-
   const navigate = useNavigate()
+
+  const [order, setOrder] = React.useState(null)
   const [city, setCity] = React.useState(null)
-  const [city2, setCity2] = React.useState(null)
-  const [cityId, setCityId] = React.useState({})
-  const [cityId2, setCityId2] = React.useState({})
+  const [cityId, setCityId] = React.useState('')
+  const [cityId2, setCityId2] = React.useState('')
   const [district, setDistrict] = React.useState(null)
   const [district2, setDistrict2] = React.useState(null)
-  const [districtName, setDistrictName] = React.useState('')
-
-
-
-  const [tariff, setTariff] = React.useState(null)
-  const [test, setTest] = React.useState('')
   const [open, setOpen] = React.useState(false)
+  const [tariff, setTariff] = React.useState(null)
+  const [tariff2, setTariff2] = React.useState(null)
 
+
+  const getOrder = async () => {
+    const docRef = doc(db, 'orders', `${id}`)
+    const docSnap = await getDoc(docRef)
+    setOrder({ ...docSnap.data(), id: docSnap.id })
+  }
+
+  React.useEffect(() => {
+    getOrder()
+  }, [])
 
   React.useEffect(() => {
     const settingTariff = onSnapshot(tariffRef, snapshot => {
@@ -79,6 +87,7 @@ const AddOrder = () => {
 
 
   const getDist = async (city) => {
+    console.log(city.target.value)
     setCityId(city.target.value)
     const id = city.target.value.id
 
@@ -96,123 +105,84 @@ const AddOrder = () => {
       .then(res => setDistrict2(res?.docs?.map((doc) => ({ ...doc?.data() }))))
   }
 
-  const handlePostOrder = async (order) => {
+  const handleChangeTariff = (tariff) => {
+    setTariff2(tariff.target.value)
+  }
+
+  const handleEditOrder = async (editOrder) => {
     setOpen(!open)
     try {
-      const docRef = await addDoc(collection(db, 'orders'),
-        {
-          addressFrom: {
-            address: order.fromAdress,
-            city: cityId.id,
-            cityName: cityId.name,
-            district: !order.fromDistrict ? '' : Number(order.fromDistrict.split(',')[0]),
-            districtName: !order.fromDistrict ? '' : order.fromDistrict.split(',')[1],
-            lat: 42.876254,
-            lon: 74.604228
-          },
-          addressTo: {
-            address: order.toAdress,
-            city: cityId2.id,
-            cityName: cityId2.name,
-            district: !order.toDistrict ? '' : Number(order.toDistrict.split(',')[0]),
-            districtName: !order.toDistrict ? '' : order.toDistrict.split(',')[1],
-            lat: 42.876254,
-            lon: 74.604228
-          },
-          tariff: {
-            cost: order.tariff.cost,
-            name: order.tariff.name,
-            uid: String(order.tariff.order),
-          },
-          tariffId: String(order.tariff.order),
-          cancellationReason: "",
-          comments: order.commits,
-          cost: !order.cost ? order.tariff.cost : Number(order.cost),
-          cityFilter: cityId.id,
-          cityFrom: cityId.id,
-          cityTo: cityId2.id,
-          courierOne: "",
-          courierTwo: "",
-          dateCreated: date,
-          packageType: order.orderType,
-          paymentMethod: order.payment,
-          paymentStatus: order.paymentStatus == 'false' ? false : true,
-          receiver: order.toPhone,
-          receiverName: order.toName,
-          receiverPhone: order.toPhone,
-          redemption: Number(order.redemption),
-          sender: order.fromPhone,
-          senderName: order.fromName,
-          senderPhone: order.fromPhone,
-          status: "status_new",
-          statusFilter: ["status_new"],
-          whoPays: Number(order.paymentPerson),
-        }
-      )
+      await updateDoc(doc(db, 'orders', `${id}`), {
+        addressFrom: {
+          address: editOrder.fromAdress,
+          city: !cityId.id ? order?.addressFrom.city : cityId.id,
+          cityName: !cityId.name
+            ? order?.addressFrom?.cityName
+            : cityId.name,
+          district: !editOrder.fromDistrict
+            ? order?.addressFrom.district
+            : Number(editOrder.fromDistrict.split(',')[0]),
+          districtName: !editOrder.fromDistrict
+            ? order?.addressFrom.districtName
+            : editOrder.fromDistrict.split(',')[1],
+          lat: 42.876254,
+          lon: 74.604228
+        },
+        addressTo: {
+          address: editOrder.toAdress,
+          city: !cityId2.id ? order?.addressTo.city : cityId2.id,
+          cityName: !cityId2.name ? order.addressTo.cityName : cityId2.name,
+          district: !editOrder.toDistrict
+            ? order?.addressTo.district
+            : Number(editOrder.toDistrict.split(',')[0]),
+          districtName: !editOrder.toDistrict
+            ? order?.addressTo.districtName
+            : editOrder.toDistrict.split(',')[1],
+          lat: 42.876254,
+          lon: 74.604228
+        },
+        tariff: {
+          cost: !tariff2?.cost ? order?.tariff?.cost : tariff2.cost,
+          name: !tariff2?.name ? order?.tariff?.name : tariff2.name,
+          uid: !tariff2?.order ? order?.tariff?.uid : String(tariff2.order),
+        },
+        tariffId: !tariff2?.order ? order?.tariff?.uid : String(tariff2.order),
+        comments: editOrder.commits,
+        cost: !editOrder.cost ? tariff2?.cost : Number(editOrder.cost),
+        cityFilter: !cityId.id ? order?.addressFrom.city : cityId.id,
+        cityFrom: !cityId.id ? order?.addressFrom.city : cityId.id,
+        cityTo: !cityId2.id ? order?.addressTo.city : cityId2.id,
+        packageType: editOrder.packageType,
+        paymentMethod: editOrder.payment,
+        paymentStatus: editOrder.paymentStatus === "false" ? false : true,
+        receiver: editOrder.toPhone,
+        receiverName: editOrder.toName,
+        receiverPhone: editOrder.toPhone,
+        redemption: Number(editOrder.redemption),
+        sender: editOrder.fromPhone,
+        senderName: editOrder.fromName,
+        senderPhone: editOrder.fromPhone,
+        whoPays: Number(editOrder.paymentPerson),
+      })
+
+      // await addDoc(collection(db, 'orders', id, 'history'), {
+      //   date: new Date,
+      //   description: `Админ обновил детали заказа`,
+      // })
+
       setOpen(false)
       setTimeout(async () => {
-        alert('Заказ успешно добавлен, нажмите на "ok" чтобы перейти к заказам')
+        alert('Заказ успешно отредактирован, нажмите на "ok" чтобы перейти к заказам')
         if (alert) {
           navigate('/orders')
         }
       }, 1000)
       reset()
-
     } catch (e) {
-      setOpen(false)
       console.log(e.message)
     }
-    // console.log(
-    //   {
-    //     addressFrom: {
-    //       address: order.fromAdress,
-    //       city: cityId.id,
-    //       cityName: cityId.name,
-    //       district: !order.fromDistrict ? '' : Number(order.fromDistrict.split(',')[0]),
-    //       districtName: !order.fromDistrict ? '' : order.fromDistrict.split(',')[1],
-    //       lat: 42.876254,
-    //       lon: 74.604228
-    //     },
-    //     addressTo: {
-    //       address: order.toAdress,
-    //       city: cityId2.id,
-    //       cityName: cityId2.name,
-    //       district: !order.toDistrict ? '' : Number(order.toDistrict.split(',')[0]),
-    //       districtName: !order.toDistrict ? '' : order.toDistrict.split(',')[1],
-    //       lat: 42.876254,
-    //       lon: 74.604228
-    //     },
-    //     tariff: {
-    //       cost: order.tariff.cost,
-    //       name: order.tariff.name,
-    //       uid: String(order.tariff.order),
-    //     },
-    //     tariffId: String(order.tariff.order),
-    //     cancellationReason: "",
-    //     comments: order.commits,
-    //     cost: !order.cost ? order.tariff.cost : Number(order.cost),
-    //     cityFilter: cityId.id,
-    //     cityFrom: cityId.id,
-    //     cityTo: cityId2.id,
-    //     courierOne: "",
-    //     courierTwo: "",
-    //     dateCreated: date,
-    //     packageType: order.orderType,
-    //     paymentMethod: order.payment,
-    //     paymentStatus: order.paymentStatus == 'false' ? false : true,
-    //     receiver: order.toPhone,
-    //     receiverName: order.toName,
-    //     receiverPhone: order.toPhone,
-    //     redemption: Number(order.redemption),
-    //     sender: order.fromPhone,
-    //     senderName: order.fromName,
-    //     senderPhone: order.fromPhone,
-    //     status: "status_new",
-    //     statusFilter: ["status_new"],
-    //     whoPays: Number(order.paymentPerson),
-    //   }
-    // )
   }
+
 
 
   const sortCity = city?.sort((a, b) => {
@@ -222,14 +192,14 @@ const AddOrder = () => {
   return (
     <>
       <div className="container">
-        <Header previous={'Статистика'} initial={'Добавление заказа'} />
-        <Title title={'Добавление заказа'} icon={<LibraryAddIcon fontSize='meduim' />} />
+        <Header previous={'Список заказов'} initial='Редактирование ' />
+        <Title title={'Редактирование заказа'} icon={<FiEdit />} />
         <div className="container-inner">
           {
             !city
               ? <Loader />
               : <form className='order-form'>
-                <div className='order-form-flex' >
+                <div className='order-form-flex'>
                   {/* ОТПРАВИТЕЛЬ */}
                   <div className='order-block'>
                     <div className='order-block-head'>
@@ -241,9 +211,10 @@ const AddOrder = () => {
                         label="Номер телефона"
                         variant="outlined"
                         type="number"
-                        size='small'
                         helperText={errors?.fromPhone && 'Масимум 10 символов'}
                         error={errors?.fromPhone && true}
+                        defaultValue={order?.sender}
+                        size="small"
                         {...register('fromPhone', {
                           required: FormValidation.RequiredInput.required,
                           maxLength: 10
@@ -254,21 +225,22 @@ const AddOrder = () => {
                         id="outlined-basic"
                         label="Имя отправителя"
                         variant="outlined"
-                        size='small'
                         helperText={errors?.fromName?.message}
                         error={errors?.fromName && true}
+                        defaultValue={order?.senderName}
+                        size="small"
                         {...register('fromName', {
                           required: FormValidation.RequiredInput.required,
                         })
                         }
                       />
                       <TextField
-                        id="fromCity"
+                        className='edit-order-input'
+                        id="filled-select-currency"
                         select
-                        label="Город/район"
+                        label={!cityId ? `${order?.addressFrom.cityName}` : cityId.name}
                         variant="outlined"
                         size="small"
-                        defaultValue={''}
                         onChange={getDist}
                       >
                         {
@@ -283,31 +255,34 @@ const AddOrder = () => {
                           ))
                         }
                       </TextField>
-                      <select
-                        className='district-select'
-                        disabled={!cityId.id ? true : false}
-                        {...register('fromDistrict')}
-                      >
-                        <option selected disabled>Выберите район</option>
+                      <select className='district-select' {...register('fromDistrict')}>
                         {
-                          district?.map((city) => (
-                            <option
-                              key={city.id}
-                              name={city.name}
-                              value={[city.id, city.name]}
+                          !district
+                            ? <option
+                              value={[order?.addressFrom.district, order?.addressFrom.districtName]}
+                              selected
                             >
-                              {city.name}
+                              {order?.addressFrom.districtName}
                             </option>
-                          ))
+                            : district?.map((city) => (
+                              <option
+                                key={city.id}
+                                name={city.name}
+                                value={[city.id, city.name]}
+                              >
+                                {city.name}
+                              </option>
+                            ))
                         }
                       </select>
                       <TextField
                         id="outlined-basic"
                         label="Адрес доставки"
                         variant="outlined"
-                        size='small'
+                        size="small"
                         error={errors?.fromAdress ? true : false}
                         helperText={errors ? errors?.fromAdress?.message : ''}
+                        defaultValue={order?.addressFrom.address}
                         {...register('fromAdress', {
                           required: FormValidation.RequiredInput.required
                         })
@@ -327,9 +302,10 @@ const AddOrder = () => {
                         label="Номер телефона"
                         variant="outlined"
                         type="number"
-                        size='small'
+                        size="small"
                         helperText={errors?.toPhone && 'Масимум 10 символов'}
                         error={errors?.toPhone && true}
+                        defaultValue={order?.receiver}
                         {...register('toPhone', {
                           required: FormValidation.RequiredInput.required,
                           maxLength: 10
@@ -340,19 +316,20 @@ const AddOrder = () => {
                         id="outlined-basic"
                         label="Имя получателя"
                         variant="outlined"
-                        size='small'
+                        size="small"
                         helperText={errors?.toName?.message}
                         error={errors?.toName && true}
+                        defaultValue={order?.receiverName}
                         {...register('toName', {
                           required: FormValidation.RequiredInput.required,
                         })
                         }
                       />
                       <TextField
-                        id="ToCity"
+                        className='edit-order-input'
+                        id="filled-select-currency2"
                         select
-                        label="Город/район"
-                        defaultValue={''}
+                        label={!cityId2 ? `${order?.addressTo.cityName}` : cityId2.name}
                         variant="outlined"
                         size="small"
                         error={errors?.toCity && true}
@@ -366,31 +343,31 @@ const AddOrder = () => {
                           ))
                         }
                       </TextField>
-                      <select
-                        className='district-select'
-                        disabled={!cityId2.id ? true : false}
-                        {...register('toDistrict')}
-                      >
-                        <option selected disabled>Выберите район</option>
+                      <select className='district-select' {...register('toDistrict')}>
+
                         {
-                          district2?.map((city) => (
-                            <option
-                              key={city.id}
-                              name={city.name}
-                              value={[city.id, city.name]}
+                          !district2
+                            ? <option
+                              value={[order?.addressTo.district, order?.addressTo.districtName]}
+                              selected
                             >
-                              {city.name}
+                              {order?.addressTo.districtName}
                             </option>
-                          ))
+                            : district2?.map((city) => (
+                              <option key={city.id} value={[city.id, city.name]}>
+                                {city.name}
+                              </option>
+                            ))
                         }
                       </select>
                       <TextField
                         id="outlined-basic"
                         label="Адрес доставки"
                         variant="outlined"
-                        size='small'
+                        size="small"
                         error={errors?.toAdress && true}
                         helperText={errors?.toAdress?.message}
+                        defaultValue={order?.addressTo.address}
                         {...register('toAdress', {
                           required: FormValidation.RequiredInput.required,
                         })
@@ -411,11 +388,11 @@ const AddOrder = () => {
                           id="filled-select-currency"
                           select
                           label="Тип посылки"
-                          defaultValue={typeOfOrder[0].value}
+                          defaultValue={order?.packageType}
                           variant="outlined"
                           size="small"
                           error={errors?.orderType && true}
-                          {...register('orderType', {
+                          {...register('packageType', {
                             required: FormValidation.RequiredInput.required,
                           })
                           }
@@ -429,12 +406,13 @@ const AddOrder = () => {
                         <TextField
                           sx={{ width: '90%' }}
                           id="filled-select-currency"
+                          className='edit-order-input'
                           select
-                          label="Тариф"
+                          label={!tariff2 ? `${order?.tariff?.name} (${order?.tariff?.cost}С̲)` : ''}
                           defaultValue={""}
                           variant="outlined"
                           size="small"
-                          {...register('tariff')}
+                          onChange={handleChangeTariff}
                         >
                           {
                             tariff?.map((type) => (
@@ -448,16 +426,17 @@ const AddOrder = () => {
                       <TextField
                         type="text"
                         size='small'
-                        label=" цену"
+                        label="Стоимость доставки"
+                        defaultValue={order?.cost}
                         {...register('cost')}
                       />
                       <TextField
                         id="outlined-basic"
                         label="Выкуп (0 если без выкупа)"
                         variant="outlined"
-                        size='small'
-                        defaultValue={0}
+                        defaultValue={order?.redemption}
                         type="number"
+                        size="small"
                         {...register('redemption', {
                           required: FormValidation.RequiredInput.required,
                         })
@@ -467,7 +446,9 @@ const AddOrder = () => {
                         id="filled-select-currency"
                         select
                         label="Кто оплачивает"
-                        defaultValue={paymentPerson[0].value}
+                        defaultValue={
+                          order?.whoPays === 1 ? paymentPerson[0].value : paymentPerson[1].value
+                        }
                         variant="outlined"
                         size="small"
                         {...register('paymentPerson', {
@@ -485,9 +466,16 @@ const AddOrder = () => {
                         id="filled-select-currency"
                         select
                         label="Метод оплаты"
-                        defaultValue={payment[0].value}
                         variant="outlined"
                         size="small"
+                        defaultValue={
+                          order?.paymentMethod === 'cash' && payment[0].value
+                          || order?.paymentMethod === 'mbank' && payment[1].value
+                          || order?.paymentMethod === 'optima' && payment[2].value
+                          || order?.paymentMethod === 'elsom' && payment[3].value
+                          || order?.paymentMethod === 'odengi' && payment[4].value
+                          || order?.paymentMethod === 'other' && payment[5].value
+                        }
                         {...register('payment', {
                           required: FormValidation.RequiredInput.required,
                         })
@@ -503,7 +491,7 @@ const AddOrder = () => {
                         id="filled-select-currency"
                         select
                         label="Статус оплаты"
-                        defaultValue={paymentStatus[0].value}
+                        defaultValue={`${order?.paymentStatus}`}
                         variant="outlined"
                         size="small"
                         {...register('paymentStatus', {
@@ -530,18 +518,22 @@ const AddOrder = () => {
                         label="Коментарии"
                         multiline
                         rows={4}
-                        {...register('commits')}
+                        defaultValue={order?.comments}
+                        {...register('commits', {
+                          required: FormValidation.RequiredInput.required,
+                        })
+                        }
                       />
                     </div>
                   </div>
                 </div>
                 <Button
-                  onClick={handleSubmit(data => handlePostOrder(data))}
+                  onClick={handleSubmit(data => handleEditOrder(data))}
                   size='large'
                   variant='contained'
-                  style={{ background: 'coral' }}
+                  style={{ background: '#66bb6a' }}
                 >
-                  Оформить заказ
+                  Сохранить
                 </Button>
               </form>
           }
@@ -556,4 +548,5 @@ const AddOrder = () => {
     </>
   )
 }
-export default AddOrder
+
+export default EditOrder

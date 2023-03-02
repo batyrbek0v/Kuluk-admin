@@ -1,0 +1,26 @@
+.order-history-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  box-shadow: rgb(0 0 0 / 8%) 0px 1px 2px;
+  border-radius: 10px;
+  padding: 1rem;
+  color: #111927;
+  gap: 4px;
+
+  p {
+    font-weight: bold;
+    font-size: 18px;
+    color: #6c737f;
+  }
+}
+
+.orders-history-wrapper {
+  width: 100%;
+  background-color: white;
+  box-shadow: rgb(0 0 0 / 8%) 0px 1px 2px;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 4px;
+}

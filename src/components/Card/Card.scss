@@ -3,9 +3,9 @@
   display: flex;
   padding: 1rem;
   gap: 12px;
-  cursor: pointer;
   border-bottom: 1px solid #ccc;
   transition: 0.3s;
+  cursor: pointer;
 
   &:hover {
     background-color: aliceblue;
@@ -14,6 +14,7 @@
   .orders-card-values {
     width: 150px;
     border-radius: 12px;
+    font-weight: 500;
 
     &.status_order {
       display: flex;
@@ -36,6 +37,7 @@
       color: #725c12;
       background-color: #f4ffda;
     }
+
     &.arrived-receiver-order {
       color: #301272;
       background-color: #e2daff;
@@ -63,6 +65,7 @@
       color: #0b815a;
       background-color: #10b9811f;
     }
+
     &.rejected-order {
       color: #810b0b;
       background-color: #b910135d;

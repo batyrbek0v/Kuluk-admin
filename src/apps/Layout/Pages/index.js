@@ -1,20 +1,23 @@
 // import Main from './../../../pages/Main/Main';
 import Main from './Main/Main';
-import AddCourier from './AddCourier/AddCourier';
+import AddCourier from './Post/Courier';
 import Couriers from './Couriers/Couriers';
-import Admin from './Admin/Admin';
-import AddOrder from './AddOrder/AddOrder';
+import AddOrder from './Post/Order';
 import Orders from './Orders/Orders';
-import OrdersMore from './OrdersMore/OrdersMore';
-import EditOrder from './EditOrder/EditOrder';
-
+import OrdersMore from './More/OrdersMore';
+import EditOrder from './Edit/Order';
+import History from './OrderHistory/History';
+import EditCourier from './Edit/Courier';
+import CourierMore from './More/Courier'
 export {
   Main,
   AddCourier,
   Couriers,
-  Admin,
   AddOrder,
   Orders,
   OrdersMore,
   EditOrder,
+  EditCourier,
+  History,
+  CourierMore
 }

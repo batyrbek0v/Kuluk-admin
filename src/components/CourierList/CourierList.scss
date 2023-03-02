@@ -1,0 +1,83 @@
+.courier-list {
+  width: 100%;
+  display: flex;
+  padding: 1rem 0 1rem 1rem;
+  gap: 12px;
+  border-bottom: 1px solid #ccc;
+  transition: 0.3s;
+  cursor: pointer;
+
+  &.deleting {
+    background-color: rgb(255, 200, 200);
+
+    &:hover {
+      background-color: rgb(255, 200, 200);
+    }
+
+  }
+
+  &:hover {
+    background-color: rgb(252, 240, 255);
+  }
+
+  .courier-list-value {
+    width: 130px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:nth-child(4) {
+      width: 100px;
+    }
+
+    &:nth-child(6) {
+      width: 100px;
+    }
+
+    &:nth-child(7) {
+      width: 100px;
+      padding: 4px 0;
+    }
+
+    p {
+      font-weight: 500;
+    }
+
+    &.online {
+      color: #0ece91;
+      background-color: #09f7a01f;
+      font-weight: bold;
+
+      p {
+        font-weight: bold;
+      }
+    }
+
+    &.offline {
+      color: #b42318;
+      background-color: #f044381f;
+      font-weight: bold;
+
+      p {
+        font-weight: bold;
+      }
+    }
+
+  }
+
+  .courier-list-actions {
+    width: 150px;
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      padding: 0;
+
+      &:hover {
+        background-color: rgb(246, 212, 255);
+
+      }
+    }
+  }
+}

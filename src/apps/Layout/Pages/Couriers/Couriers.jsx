@@ -5,10 +5,11 @@ import { Loader } from '../../../../components/Loader/Loader';
 import { onSnapshot } from 'firebase/firestore';
 import { couriersRef } from './../../../../components/Utils/fireStoreRef';
 import { FaClipboardList } from 'react-icons/fa';
-import noData from '../../../../assets/images/no-data.svg'
+import noData from '../../../../assets/images/no-data2.svg'
 import { useNavigate } from 'react-router-dom';
 import { columnCount, courierTableList } from '../../../../components/Utils';
 import CourierList from './../../../../components/CourierList/CourierList';
+import './Couriers.scss'
 import {
   Pagination,
   PaginationItem,
@@ -49,14 +50,14 @@ const Couriers = () => {
     <>
       <div className='container'>
         <Header previous="Cтатистика" initial="Список курьеров" />
-        <Title title={'Таблица курьеров'} icon={<FaClipboardList />} />
+        <Title title={'Список курьеров'} icon={<FaClipboardList />} />
         <div className='container-inner'>
           <div className="orders-card-wrapper">
             <div className='orders-card-header'>
               <Button
                 variant="contained"
-                className='orders-card-header-btn'
-                onClick={() => navigate('/addcourier')}
+                className='orders-card-header-btn courier'
+                onClick={() => navigate('/post/courier')}
               >
                 Создать курьера
               </Button>
@@ -90,7 +91,7 @@ const Couriers = () => {
                 />
               </Stack>
             </div>
-            {/* <div className="orders-card-wrapper-labels">
+            <div className="courier-list-wrapper-labels">
               {
                 courierTableList.map((label) => (
                   <div key={label.headerName}>
@@ -98,12 +99,13 @@ const Couriers = () => {
                   </div>
                 ))
               }
-            </div> */}
+            </div>
             {
               !courier
                 ? <Loader />
-                // : <CourierList />
-                : courier?.map(item => (<CourierList {...item} key={item?.id} />))
+                : courier
+                  ?.slice((page - 1) * column, (page - 1) * column + column)
+                  .map(item => <CourierList {...item} key={item?.id} />)
             }
             {
               !courier?.length &&

@@ -21,13 +21,15 @@ const LayoutRoutes = () => {
         <Navbar />
         <Routes>
           <Route path='/' element={<LayoutPages.Main />} />
-          <Route path='/addorder' element={<LayoutPages.AddOrder />} />
+          <Route path='/post/order' element={<LayoutPages.AddOrder />} />
           <Route path='/orders' element={<LayoutPages.Orders />} />
-          <Route path='/orders/:id' element={<LayoutPages.OrdersMore />} />
+          <Route path='/more/orders/:id' element={<LayoutPages.OrdersMore />} />
           <Route path='/orders/edit/:id' element={<LayoutPages.EditOrder />} />
-          <Route path='/addcourier' element={<LayoutPages.AddCourier />} />
+          <Route path='/orders/history/:id' element={<LayoutPages.History />} />
+          <Route path='/post/courier' element={<LayoutPages.AddCourier />} />
           <Route path='/couriers' element={<LayoutPages.Couriers />} />
-          <Route path='/admin' element={<LayoutPages.Admin />} />
+          <Route path='/more/courier/:id' element={<LayoutPages.CourierMore />} />
+          <Route path='/couriers/edit/:id' element={<LayoutPages.EditCourier />} />
         </Routes>
       </div>
     </>

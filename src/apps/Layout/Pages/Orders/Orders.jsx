@@ -9,10 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import Card from '../../../../components/Card/Card';
 import noData from '../../../../assets/images/no-data.svg'
 import './Orders.scss'
-import { 
-  columnCount, 
-  orderStatus, 
-  sortByCostList ,
+import {
+  columnCount,
+  orderStatus,
+  sortByCostList,
   orderLabels,
   typeOfOrder
 } from '../../../../components/Utils';
@@ -226,7 +226,7 @@ const Orders = () => {
               <Button
                 variant="contained"
                 className='orders-card-header-btn'
-                onClick={() => navigate('/addorder')}
+                onClick={() => navigate('/post/order')}
               >
                 Новый заказ
               </Button>
@@ -260,7 +260,7 @@ const Orders = () => {
                 />
               </Stack>
             </div>
-            <div className="orders-card-wrapper-labels">
+            <div className="orders-list-wrapper-labels">
               {
                 orderLabels.map(({ id, name }) => (
                   <div key={id}>
@@ -294,27 +294,3 @@ const Orders = () => {
 }
 
 export default Orders
-
-  // ------------------------
-  // FILTER-SEARCH  
-  // const filterSearch = order?.filter(item => {
-  //     return item.senderName?.toLowerCase().includes(input.toLowerCase())
-  //     || item.adressForm?.cityName.toLowerCase().includes(input.toLowerCase())
-  //   })
-
-  // 
-
-
-  // SORT-COST-ASC-DESC
-  // const handleChangeStatus = (event, newValue) => {
-  //   const value = event.target.value
-  //   const sortedData = [...order].sort((a, b) => {
-  //     if (value === 'ASC') {
-  //       return a.cost - b.cost;
-  //     } else {
-  //       return b.cost - a.cost;
-  //     }
-  //   });
-  //   setOrder(sortedData)
-  //   console.log(order)
-  // }

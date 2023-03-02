@@ -12,7 +12,8 @@ import { db } from '../../../../configs';
 import { Title } from '../../../../components/Title/Title'
 import { Loader } from '../../../../components/Loader/Loader';
 import { Header } from '../../../../components/Header/Header';
-import './OrdersMore.scss'
+import { orderStatus } from '../../../../components/Utils';
+import './scss/OrdersMore.scss'
 import {
   Divider,
   Button,
@@ -24,8 +25,6 @@ import {
   DialogTitle,
   DialogActions
 } from '@mui/material';
-import { couriersRef } from '../../../../components/Utils/fireStoreRef';
-import { orderStatus } from '../../../../components/Utils';
 
 const OrdersMore = () => {
 
@@ -120,8 +119,6 @@ const OrdersMore = () => {
   const handleClickClose = () => {
     setOpen(false);
   };
-
-  console.log(order?.status)
 
   return (
     <>
@@ -359,6 +356,7 @@ const OrdersMore = () => {
                 <div className={!deleting ? "orders-more-box actions" : "orders-more-box deleting"}>
                   <Button variant='contained' onClick={handleClickOpen}>Удалить</Button>
                   <Button variant='contained' onClick={() => navigate(`/orders/edit/${id}`)}>Редактировать</Button>
+                  <Button variant='contained' onClick={() => navigate(`/orders/history/${id}`)}>История</Button>
                 </div>
               </div>
           }

@@ -12,9 +12,9 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export const sideList = [
   { id: 1, icon: <AssessmentIcon />, title: 'Статистика', path: '/' },
-  { id: 2, icon: <AiOutlinePlusCircle size={18} />, title: 'Создать заказ', path: '/addorder' },
+  { id: 2, icon: <AiOutlinePlusCircle size={18} />, title: 'Создать заказ', path: '/post/order' },
   { id: 3, icon: <FaClipboardList size={18} />, title: 'Список заказов', path: '/orders' },
-  { id: 4, icon: <AiOutlinePlusCircle size={18} />, title: 'Создать курьера', path: '/addcourier' },
+  { id: 4, icon: <AiOutlinePlusCircle size={18} />, title: 'Создать курьера', path: '/post/courier' },
   { id: 5, icon: <FaClipboardList size={18} />, title: 'Список курьеров', path: '/couriers' },
   { id: 6, icon: <AdminPanelSettingsIcon />, title: 'Админ панель', path: '/admin' },
 ]
@@ -79,7 +79,7 @@ export const courierTableList = [
     valueGetter: (params) => `${params.row.online === false ? 'Оффлайн' : `Онлайн`}`
   },
   {
-    field: 'number', headerName: 'Номер телефона', sortable: false, width: 160,
+    field: 'number', headerName: 'Моб-номер', sortable: false, width: 160,
   },
 ];
 // ORDER-TABLE=====================

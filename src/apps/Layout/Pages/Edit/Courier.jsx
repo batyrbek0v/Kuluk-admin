@@ -1,16 +1,16 @@
 import React from 'react'
+import { useForm } from 'react-hook-form'
+import { Title } from '../../../../components/Title/Title'
+import { useParams } from 'react-router-dom';
 import { db } from '../../../../configs';
-import { Title } from './../../../../components/Title/Title';
-import { Loader } from './../../../../components/Loader/Loader';
-import { Header } from './../../../../components/Header/Header';
-import { useForm } from 'react-hook-form';
+import { Loader } from '../../../../components/Loader/Loader';
+import { Header } from '../../../../components/Header/Header';
 import { citiesRef } from '../../../../components/Utils/fireStoreRef';
 import { courierType } from '../../../../components/Utils';
 import { useNavigate } from 'react-router-dom';
 import { FormValidation } from '../../../../components/Form/FormValidation/exports';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
-import { doc, setDoc, getDocs, } from "firebase/firestore";
-import './AddCourier.scss'
+import { doc, setDoc, getDocs, getDoc, updateDoc, } from "firebase/firestore";
 import {
   MenuItem,
   TextField,
@@ -20,11 +20,15 @@ import {
   CircularProgress
 } from '@mui/material';
 
-const AddCourier = () => {
+const EditCourier = () => {
 
   const [city, setCity] = React.useState(null)
+  const [cityId, setCityId] = React.useState('')
+  const [courier, setCourier] = React.useState(null)
   const [open, setOpen] = React.useState(false)
+  const { id } = useParams()
   const navigate = useNavigate()
+
 
   const {
     register,
@@ -33,18 +37,41 @@ const AddCourier = () => {
     formState: { errors }
   } = useForm()
 
-  const handleAddCourirer = async (data) => {
+
+  React.useEffect(() => {
+    const getCourier = async () => {
+      const docRef = doc(db, 'couriers', `${id}`)
+      const docSnap = await getDoc(docRef)
+      setCourier({ ...docSnap.data(), id: docSnap.id })
+    }
+    const getCity = async () => {
+      const data = await getDocs(citiesRef)
+      setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
+    }
+
+    getCourier()
+    getCity()
+  }, [])
+
+
+  const handleChangeCity = (event) => {
+    setCityId(event.target.value)
+  }
+
+  const handleEditCourier = async (data) => {
     setOpen(!open)
     try {
-      const docRef = await setDoc(doc(db, "couriers", `${data.phone}`), {
+      const docRef = await updateDoc(doc(db, "couriers", `${data.phone}`), {
         ...data,
-        cityId: data.city.id,
-        active: false,
-        online: false,
+        city: {
+          name: !cityId.name ? courier?.city.name : cityId.name,
+          id: !cityId.id ? courier?.city.id : cityId.id,
+        },
+        cityId: !cityId.id ? courier?.city.id : cityId.id,
       })
       setOpen(false)
       setTimeout(async () => {
-        alert('Курьер успешно добавлен, нажмите на "ok" чтобы перейти к курьерам')
+        alert('Курьер успешно отредактирован, нажмите на "ok" чтобы перейти к курьерам')
         if (alert) {
           navigate('/couriers')
         }
@@ -53,44 +80,29 @@ const AddCourier = () => {
 
     } catch (e) {
       console.error("Error adding document: ", e);
-    } finally {
-      reset()
     }
   }
 
-  React.useEffect(() => {
-    const getCity = async () => {
-      const data = await getDocs(citiesRef)
-      setCity(data?.docs?.map((doc, index) => ({ ...doc?.data() })))
-    }
-    getCity()
-  }, [])
-
-  const sortCity = city?.sort((a, b) => {
-    if (a['id'] < b['id']) return -1
-  })
-
   return (
     <>
-      <div className='container'>
-        <Header previous="Статистика" initial="Добавить курьера" />
-        <Title title={'Добавление курьера'} icon={<AiOutlinePlusCircle />} />
+      <div className="container">
+        <Header previous={'Cписок курьеров'} initial={'Редактирование курьера'} />
+        <Title title={'Редактирование курьера'} />
         <div className="container-inner">
           {
-            !city
+            !courier
               ? <Loader />
               : (
                 <div className="addCourier-wrapper">
                   <div className='order-block-head'>
-                    <h3>добавление курьера</h3>
+                    <h3>Редактирование курьера</h3>
                   </div>
                   <form className='add-courier-form'>
                     <Box sx={{ display: 'flex', gap: '4px' }}>
                       <TextField
                         id="filled-textarea"
-                        label="Имя"
-                        placeholder="Иван"
                         multiline
+                        defaultValue={courier?.name}
                         variant="outlined"
                         size="small"
                         name='Name'
@@ -105,15 +117,11 @@ const AddCourier = () => {
                       />
                       <TextField
                         id="filled-textarea"
-                        label="Фамилия"
-                        placeholder="Иванов"
-                        multiline
+                        defaultValue={courier.surName}
                         variant="outlined"
                         size="small"
-                        name='SurName'
                         helperText={errors?.surName?.message}
                         className="add-courier-input"
-
                         error={errors?.surName && true}
 
                         {...register('surName',
@@ -126,11 +134,10 @@ const AddCourier = () => {
                     <Box sx={{ display: 'flex', gap: '4px' }}>
                       <TextField
                         id="filled-textarea"
-                        label="ПИН"
-                        placeholder="0101"
                         variant="outlined"
                         size="small"
                         name='PIN'
+                        defaultValue={courier.pin}
                         className="add-courier-input"
                         helperText={errors?.PIN?.message}
                         error={errors?.PIN && true}
@@ -144,8 +151,7 @@ const AddCourier = () => {
                       />
                       <TextField
                         id="filled-textarea"
-                        label="Моб-номер"
-                        placeholder="0700-77-77-77"
+                        defaultValue={courier.phone}
                         multiline
                         variant="outlined"
                         size="small"
@@ -164,9 +170,9 @@ const AddCourier = () => {
                       <TextField
                         id="filled-select-currency"
                         select
-                        label="Тип курьера"
-                        defaultValue=""
+                        // label="Тип курьера"
                         variant="outlined"
+                        defaultValue={courier?.type}
                         className="add-courier-input"
                         size="small"
                         {...register('type')}
@@ -180,13 +186,13 @@ const AddCourier = () => {
                       <TextField
                         id="filled-select-currency"
                         select
-                        label="Город/район"
-                        defaultValue={''}
+                        label={!cityId ? courier?.city.name : cityId.name}
                         variant="outlined"
                         className="add-courier-input"
                         size="small"
                         name='city'
-                        {...register('city')}
+                        onChange={handleChangeCity}
+                      // {...register('city')}
                       >
                         {city?.sort().map((type) => (
                           <MenuItem key={type.id} value={type}>
@@ -197,9 +203,8 @@ const AddCourier = () => {
                     </Box>
                     <TextField
                       id="filled-textarea"
-                      label="Рейтинг"
-                      placeholder="5.0"
                       multiline
+                      defaultValue={courier.raiting}
                       variant="outlined"
                       size="small"
                       name='raiting'
@@ -213,14 +218,14 @@ const AddCourier = () => {
                     />
                   </form>
                   <Button
-                    onClick={handleSubmit(data => handleAddCourirer(data))}
+                    onClick={handleSubmit(data => handleEditCourier(data))}
                     size='large'
                     fullWidth
                     variant='contained'
                     style={{ background: 'coral' }}
                     sx={{ marginTop: "10px" }}
                   >
-                    Создать курьера
+                    Сохранить
                   </Button>
                 </div>
               )
@@ -237,4 +242,4 @@ const AddCourier = () => {
   )
 }
 
-export default AddCourier
+export default EditCourier
