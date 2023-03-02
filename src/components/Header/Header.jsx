@@ -18,7 +18,6 @@ export const Header = ({ previous, initial }) => {
           </Badge>
           <Box display="flex" alignItems="center" gap="4px">
             <Avatar src='' />
-            <Typography variant="p">Kuluk admin</Typography>
           </Box>
         </Stack>
       </div>

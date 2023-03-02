@@ -2,13 +2,13 @@ import React from 'react'
 import { Button, Dialog, DialogActions, DialogTitle } from '@mui/material';
 import { AiFillDelete } from 'react-icons/ai';
 import { RiEditFill } from 'react-icons/ri'
-import './CourierList.scss'
+import './scss/Courier.scss'
 import { db } from '../../configs';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
 
-const CourierList = ({
+const Courier = ({
   surName,
   raiting,
   active,
@@ -108,4 +108,4 @@ const CourierList = ({
   )
 }
 
-export default CourierList
+export default Courier

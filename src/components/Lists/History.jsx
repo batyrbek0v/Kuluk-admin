@@ -1,8 +1,8 @@
 import React from 'react'
-import './HistoryList.scss'
+import './scss/History.scss'
 
 
-const HistoryList = ({ description, id, date }) => {
+const History = ({ description, id, date }) => {
 
   const dateTransform = new Date(+date?.seconds * 1000)
 
@@ -31,4 +31,4 @@ const HistoryList = ({ description, id, date }) => {
   )
 }
 
-export default HistoryList
+export default History

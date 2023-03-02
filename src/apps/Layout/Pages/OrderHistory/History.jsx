@@ -5,7 +5,7 @@ import { Header } from '../../../../components/Header/Header';
 import { Title } from '../../../../components/Title/Title';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../../../../configs';
-import HistoryList from '../../../../components/HistoryList/HistoryList';
+import HistoryList from '../../../../components/Lists/History';
 import { Loader } from '../../../../components/Loader/Loader';
 import noData from '../../../../assets/images/no-data3.svg'
 

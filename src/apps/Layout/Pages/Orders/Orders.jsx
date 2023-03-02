@@ -6,7 +6,7 @@ import { FaClipboardList } from 'react-icons/fa'
 import { orderRef } from './../../../../components/Utils/fireStoreRef';
 import { Header } from '../../../../components/Header/Header';
 import { useNavigate } from 'react-router-dom';
-import Card from '../../../../components/Card/Card';
+import OrderList from '../../../../components/Lists/Order';
 import noData from '../../../../assets/images/no-data.svg'
 import './Orders.scss'
 import {
@@ -275,7 +275,7 @@ const Orders = () => {
                 : order
                   ?.sort((a, b) => a['dateCreated']?.seconds > b['dateCreated']?.seconds && -1)
                   .slice((page - 1) * column, (page - 1) * column + column)
-                  .map(item => <Card {...item} key={item?.id} />)
+                  .map(item => <OrderList {...item} key={item?.id} />)
             }
             {
               !order?.length &&

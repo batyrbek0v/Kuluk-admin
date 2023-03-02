@@ -8,7 +8,7 @@ import { FaClipboardList } from 'react-icons/fa';
 import noData from '../../../../assets/images/no-data2.svg'
 import { useNavigate } from 'react-router-dom';
 import { columnCount, courierTableList } from '../../../../components/Utils';
-import CourierList from './../../../../components/CourierList/CourierList';
+import Courier from '../../../../components/Lists/CourierList';
 import './Couriers.scss'
 import {
   Pagination,
@@ -61,7 +61,6 @@ const Couriers = () => {
               >
                 Создать курьера
               </Button>
-
               <Stack spacing={2} direction={'row'}>
                 <TextField
                   id="outlined-select-currency"
@@ -105,7 +104,7 @@ const Couriers = () => {
                 ? <Loader />
                 : courier
                   ?.slice((page - 1) * column, (page - 1) * column + column)
-                  .map(item => <CourierList {...item} key={item?.id} />)
+                  .map(item => <Courier {...item} key={item?.id} />)
             }
             {
               !courier?.length &&

@@ -4,7 +4,7 @@ import { MdDeleteOutline, MdHistory } from 'react-icons/md';
 import { FiEdit, FiMoreHorizontal } from 'react-icons/fi'
 import { db } from '../../configs';
 import { orderStatus } from '../Utils';
-import './Card.scss'
+import './scss/Order.scss'
 import {
   addDoc,
   deleteDoc,
@@ -24,7 +24,7 @@ import {
   TextField
 } from '@mui/material';
 
-const Card = ({
+const Order = ({
   id,
   dateCreated,
   status,
@@ -291,4 +291,4 @@ const Card = ({
   )
 }
 
-export default Card
+export default Order
